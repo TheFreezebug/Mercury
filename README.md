@@ -35,3 +35,19 @@ Take a moment to firmiliarize yourself with the menu.
 
 ![alt tag](https://dl.dropboxusercontent.com/u/40443211/Share/2014-11/2014-11-30_06-37-41.png)
 
+On the left is the rank list, it will list an index and titie, click one of these to see the properties for a rank.
+
+Below is a description of what all of the properties of a rank does.
+
+
+* Index -  The internal name for a rank, this is how you set groups and perform tasks on the rank.
+* Title - If you have the scoreboard enabled, then this will set the title for that rank's teams.
+* Order - If you have the scoreboard enabled, this will define the order the rank appears relative to other ranks.
+* Current Commands -  The commands this rank has, note that if a rank has the @allcmds@ privlage, then it has all privileges, regardless of what is in its rank.
+* Availible commands - The commands this rank does not have.
+* Color - If you have the scoreboard enabled, this will be the color of that rank's team.
+
+
+
+
+
