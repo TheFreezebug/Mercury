@@ -35,14 +35,13 @@ function Mercury.Bans.GetBanDuration(bantime) -- RETURNS BAN LENGTH IN MINUITES.
 end
 
 function Mercury.Bans.UnbanID(STEAM,REASON)
-	 Msg("[Mercury]: UNBANID -> " .. STEAM .. " (" .. REASON .. ")")
-	 Msg(" . . . ")
+
 	 if (file.Exists("mercury/bans/" .. SAFESID(STEAM) .. ".txt","DATA")) then
 	 		file.Delete("mercury/bans/" .. SAFESID(STEAM) .. ".txt")
-	 		Msg("SUCCESS")
+	
 	 		return true,nil
 	 else
-	 		Msg("FAIL (BAN NOT EXISTANT) ")
+
 	 		return false,"Ban did not exist!"
 
 	 end
@@ -107,7 +106,7 @@ function Mercury.Bans.Add(caller,plr,time,rsn)
 		file.Write("mercury/bans/" .. SAFESID(plr) .. ".txt",util.TableToJSON(ban))
 	end
 	
-	PrintTable(ban)
+
  end
 
 function Mercury.Bans.ConnectionCheck(steamID,ipAdress, svPassword, clPassword, name)
@@ -183,4 +182,8 @@ net.Receive("Mercury:BanData",function(len,p)
 		net.Send(p)
 	end
 
+end)
+
+Mercury.ModHook.Add("PrivilegesReady","UnbanBot",function()
+	Mercury.Bans.UnbanID("BOT","Bots don't need to be banned.")
 end)

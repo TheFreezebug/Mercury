@@ -18,7 +18,6 @@ local args =  net.ReadTable()
 
 	if command=="SEND_RANKS" then
 		Mercury.Ranks.RankTable = args
-		PrintTable(Mercury.Ranks.RankTable)
 		for k,rtab in pairs(Mercury.Ranks.RankTable) do
 			local title = rtab.title
 			local order = rtab.order
