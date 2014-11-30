@@ -18,7 +18,6 @@ local function USAFESID(steam)
 
 	local gx = string.gsub(steam,"_",":")
 	local ax = string.sub(steam,7,#steam)
-	print("AX IS " .. ax) 
 	gx = string.gsub(ax,"_",":")
 	return "STEAM_" ..gx
 end

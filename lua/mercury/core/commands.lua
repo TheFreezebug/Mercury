@@ -45,8 +45,8 @@ Mercury.Commands.PlayerLookup = plookup
 
 
 function Mercury.Commands.Call(caller,command,args,silent) // Here I cum ~<3
-	print(silent)
-	print("----")
+
+
 
 	if !command then return false,"No command specified." end
 	command = string.lower(command)

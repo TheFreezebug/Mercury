@@ -74,8 +74,6 @@ end
 
 function UDL.PIS(P)
 	local shouldrank = UDL.GetData(P)
-	print("OH BABY FUCK ME.")
-	print(shouldrank.rank)
 	Mercury.Ranks.SetRank(P,shouldrank.rank)
 	P.RankLoaded = true
 end
