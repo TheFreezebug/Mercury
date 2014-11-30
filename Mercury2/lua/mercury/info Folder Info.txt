@@ -1,0 +1,11 @@
+client - All of the files in this folder will be loaded and sent to the client.
+
+commands - This is purely for command files.
+
+core - any primary part of the admin mod
+
+extensions - any miniature addons, something extra, like rank times.
+
+lib - The primary libraries for the system. When you're putting something in here, make sure it only DEFINES functions, or prepares data.
+
+menu - All menu files, primarily containing tabs.
