@@ -32,3 +32,6 @@ To open the menu, type !menu in chat, you should see a window pop up with the Me
 
 Take a moment to firmiliarize yourself with the menu.
 
+
+![alt tag](https://dl.dropboxusercontent.com/u/40443211/Share/2014-11/2014-11-30_06-37-41.png)
+
