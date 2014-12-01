@@ -114,16 +114,11 @@ end
  	net.SendToServer()
 
  	
- 	  local bstr = [[==Mercury bans system v1.0A==
+ 	  local bstr = [[Mercury Ban System
      
 Just a sec, waiting on the server. ]]
- 	  if LocalPlayer():HasPrivilege("editban")~=true then 
- 	  bstr = [[==Mercury bans system v1.0A==
 
 
- 	  No access. ]]
-
- 	  end
 
  	  function banwindow:Paint(w,h)
    		  draw.RoundedBox( 0, 0, 0, w, h, Color( 1,1, 1, 255 ) )
@@ -140,6 +135,15 @@ Just a sec, waiting on the server. ]]
 			    end 
 			    
 		  end
+		   	  if LocalPlayer():HasPrivilege("editban")~=true then 
+ 	  bstr = [[Mercury Ban System
+
+
+No access to privilege "editban" . ]]
+ 	  return 
+ 	end
+ 	
+ 	 
 	timer.Simple(2,function()
 		DoLayout(CONTAINER)
 		if IsValid(banwindow) then 

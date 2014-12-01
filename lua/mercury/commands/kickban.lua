@@ -1,3 +1,7 @@
+Mercury.Commands.AddPrivilege("editban")	
+
+
+
 MCMD = {}
 MCMD.Command = "kick"
 MCMD.Verb = "kicked"
