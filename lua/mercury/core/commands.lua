@@ -294,3 +294,7 @@ for k,v in pairs(file.Find("mercury/commands/*.lua","LUA")) do
 
 end
 
+if Mercury.Booted==true then // This will call the modhook library's hooks again. This is for lua refresh. If Mercury is fully loaded. Then it will not call the init script again. When the commands file is refreshed, the privilege registers are terminated. This will call them again.
+		Mercury.ModHook.Call("AddPrivileges")
+		Mercury.ModHook.Call("PrivilegesReady")
+end
