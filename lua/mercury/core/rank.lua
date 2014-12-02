@@ -243,7 +243,7 @@ end
 timer.Create("Mercury:OverrideAdmin",0.1,1,function() -- This is just in case you have something weird tampering with these functions. THEY ARE MINE.
 	function metaplayer:IsAdmin()
 			if !Mercury.Ranks.RankTable[self:GetRank()] then return false end
-		return Mercury.Ranks.RankTable[self:GetRank()].admin or Mercury.Ranks.RankTable[self:GetUserGroup()].superadmin
+		return Mercury.Ranks.RankTable[self:GetRank()].admin or Mercury.Ranks.RankTable[self:GetRank()].superadmin
 	end
 	function metaplayer:IsSuperAdmin()
 			if !Mercury.Ranks.RankTable[self:GetRank()] then return false end
