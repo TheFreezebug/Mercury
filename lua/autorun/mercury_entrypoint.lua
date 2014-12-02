@@ -1,5 +1,5 @@
 Mercury = {} // Onward!
-Mercury.Version = "Hotel 4"
+Mercury.Version = "GabeN 6"
 Mercury.Booted = false
 Mercury.Config = {
 	UseScoreboard = true,  // Don't change this! This is designed to contain default config values in case yours get fucked up some how.
