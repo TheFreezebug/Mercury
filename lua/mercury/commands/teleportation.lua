@@ -3,7 +3,7 @@ MCMD.Command = "goto"
 MCMD.Verb = "gone to"
 MCMD.RconUse = true
 MCMD.Useage = "<player>"
-MCMD.UseImmunity = false
+MCMD.UseImmunity = false 
 MCMD.PlayerTarget = true
 MCMD.HasMenu = true
 
@@ -141,8 +141,6 @@ function MCMD.GenerateMenu(frame)
 end
 
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
-
---	target:SetPos(player:GetEyeTraceNoCursor().HitPos + Vector(0,0,72))
 
 
 
