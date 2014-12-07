@@ -15,7 +15,7 @@ First, install Mercury into your addons folder, then proceed to start / restart 
 After the server has started, you need to join it; when you spawn in, use either RCON or type directly in the server's console to run this
 
 
-hg gcreate owner Owner 1,1,1
+hg rankadd owner Owner 1,1,1
 
 
 After executing the above, you need to give the rank all privileges, this can be accomplished by running the following in RCON or in the server console.
