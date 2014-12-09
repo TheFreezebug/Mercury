@@ -117,7 +117,7 @@ function callfunc(caller,args)
 	sts,err = Mercury.Bans.Add(caller,args[1],tonumber(args[2]),args[3])
 
 	timer.Simple(0.1,function()
-		args[1]:Kick(args[2])
+		args[1]:Kick(args[3])
 	end)
 
 	local bancolor = Color(0,0,255)
