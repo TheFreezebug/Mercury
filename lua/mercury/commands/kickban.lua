@@ -124,7 +124,7 @@ function callfunc(caller,args)
 	local timestring = args[2] .. " minutes"
 	if tonumber(args[2])==0 then
 		bancolor = Color(255,0,0)
-		timestring = "eternety"
+		timestring = "eternity"
 	end
 
 
