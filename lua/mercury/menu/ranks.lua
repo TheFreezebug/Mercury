@@ -27,6 +27,8 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 				net.WriteString("ranksetindex")
 				net.WriteTable({rindex,IndexBox:GetValue()})
 				rindex = string.lower(IndexBox:GetValue())
+				line.__RANKINDEX = string.lower(IndexBox:GetValue())
+				line:SetValue(string.lower(IndexBox:GetValue()))
 			net.SendToServer()
 		end
 
