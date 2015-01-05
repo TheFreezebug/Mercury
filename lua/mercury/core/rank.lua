@@ -229,10 +229,9 @@ function Mercury.Ranks.SetRank(play,rank)
 	play._RANK = rank
 	Mercury.Ranks.SendRankUpdateToClients()
 
-	//NOW FOR A PROP WAY TO DO THINGS!
-	if gax.superadmin then play:SetUserGroup("superadmin")
-	elseif gax.admin then play:SetUserGroup("admin")
-	else play:SetUserGroup("guest") end
+	if gax.superadmin then play:SetNWString("UserGroup", "superadmin")
+	elseif gax.admin then play:SetNWString("UserGroup", "admin")
+	else play:SetNWString("UserGroup", "guest") end
 
 	return true
 end
@@ -317,7 +316,7 @@ end)
 
 timer.Create("Mercury_UpdatePlayerInfo",0.5,0,function()
 	for k,v in pairs(player.GetAll()) do 
-		v:SetNWString("UserGroup",v:GetRank())
+		v:SetNWString("UserRank",v:GetRank())
 		pcall( function()
 			if Mercury.Config["UseTeams"] == true then 
 					v:SetTeam(Mercury.Ranks.RankTable[v:GetRank()].order  - Mercury.Config["TeamOffset"] )

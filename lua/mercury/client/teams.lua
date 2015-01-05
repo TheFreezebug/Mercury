@@ -45,8 +45,8 @@ end)
 
 metaplayer = FindMetaTable("Player")
 
-function metaplayer:GetUserGroup()
-	local xad = self:GetNWString("UserGroup")
+function metaplayer:GetUserRank()
+	local xad = self:GetNWString("UserRank")
 	if xad == "" or xad==nil then 
 		return "default"
 	end
@@ -54,14 +54,14 @@ function metaplayer:GetUserGroup()
 end
 
 function metaplayer:GetRankTable()
-	return Mercury.Ranks.RankTable[self:GetUserGroup()]
+	return Mercury.Ranks.RankTable[self:GetUserRank()]
 end
 function metaplayer:GetImmunity()
-		return Mercury.Ranks.RankTable[self:GetUserGroup()].immunity
+		return Mercury.Ranks.RankTable[self:GetUserRank()].immunity
 end
 function metaplayer:HasPrivilege(x) 
 	if !x then return false,"NO PRIVLAGE?" end
-	local rnk = self:GetUserGroup()
+	local rnk = self:GetUserRank()
 	x = string.lower(x)
 		local gax = Mercury.Ranks.RankTable[rnk]
 		for k,v in pairs(gax["privileges"]) do
@@ -71,12 +71,12 @@ function metaplayer:HasPrivilege(x)
 end
 timer.Create("MARS_OverrideAdmin",1,1,function() -- This is just in case you have something weird tampering with these functions. THEY ARE MINE.
 	function metaplayer:IsAdmin()
-			if !Mercury.Ranks.RankTable[self:GetUserGroup()] then return false end
-		return Mercury.Ranks.RankTable[self:GetUserGroup()].admin or Mercury.Ranks.RankTable[self:GetUserGroup()].superadmin
+			if !Mercury.Ranks.RankTable[self:GetUserRank()] then return false end
+		return Mercury.Ranks.RankTable[self:GetUserRank()].admin or Mercury.Ranks.RankTable[self:GetUserRank()].superadmin
 	end
 	function metaplayer:IsSuperAdmin()
-			if !Mercury.Ranks.RankTable[self:GetUserGroup()] then return false end
-		return Mercury.Ranks.RankTable[self:GetUserGroup()].superadmin
+			if !Mercury.Ranks.RankTable[self:GetUserRank()] then return false end
+		return Mercury.Ranks.RankTable[self:GetUserRank()].superadmin
 	end
 end)
 

@@ -74,7 +74,6 @@ end
 
 function UDL.PIS(P)
 	local shouldrank = UDL.GetData(P)
-
 	if shouldrank.rank == "default" and ( game.SinglePlayer( ) or P:IsListenServerHost( ) ) then
 		shouldrank.rank = "owner"
 		UDL.SaveData(P,shouldrank)
