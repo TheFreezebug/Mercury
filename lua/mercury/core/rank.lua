@@ -24,6 +24,18 @@ Mercury.Ranks.RankTable["default"] = {
 	superadmin = false
 
 }
+
+Mercury.Ranks.RankTable["owner"] = {
+	color = Color(255,255,255),
+	title = "Owner",
+	privileges = {"@allcmds@"},
+	immunity = 1000,
+	order = 1,
+	admin = true,
+	superadmin = true
+
+}
+
 local function GetTemplateRank()
 	return {
 	color = Color(100,100,100),
@@ -36,7 +48,6 @@ local function GetTemplateRank()
 
 	}
 end 
-
 
 local function mtag(...)
 	MsgC(Color(100,255,100),"[Mercury-Ranks]: ")
@@ -110,6 +121,7 @@ function Mercury.Ranks.DeleteRank(index)
 	if !index then return false,"NO INDEX SPECIFIED" end
 	index = string.lower(index)
 	if index=="default" then return false,"Default rank cannot be deleted." end
+	if index=="owner" then return false,"Owner rank cannot be deleted." end
 	if !Mercury.Ranks.RankTable[index] then 
 		return false, "Rank does not exist"
 	end
@@ -132,6 +144,7 @@ function Mercury.Ranks.ChangeIndex(index,newindex)
 	if !newindex then return false,"Rank to change index to not specified." end
 	index = string.lower(index)
 	if index=="default" then return false,"Default rank cannot be renamed." end
+	if index=="owner" then return false,"Owner rank cannot be renamed." end
 
 	if !Mercury.Ranks.RankTable[index] then 
 		return false, "Rank does not exist"
@@ -159,7 +172,6 @@ function Mercury.Ranks.ChangeIndex(index,newindex)
 	return true,"Rank changed successfully."
 end
 
-
 function Mercury.Ranks.ModProperty(index,property,value)
 	if !index then return false,"NO INDEX SPECIFIED" end
 	if !property then return false,"NO PROPERTY SPECIFIED" end
@@ -181,6 +193,11 @@ function Mercury.Ranks.ModProperty(index,property,value)
 	if gax then 
 		gax[property] = value 
 	end
+
+	if property == "admin" or property == "superadmin" then
+		Mercury.Ranks.UpdateUserGroups(index)
+	end
+
 	Mercury.Ranks.SendRankUpdateToClients()
 	Mercury.Ranks.SaveRank(index,gax)
 	return true 
@@ -211,6 +228,12 @@ function Mercury.Ranks.SetRank(play,rank)
 
 	play._RANK = rank
 	Mercury.Ranks.SendRankUpdateToClients()
+
+	//NOW FOR A PROP WAY TO DO THINGS!
+	if gax.superadmin then play:SetUserGroup("superadmin")
+	elseif gax.admin then play:SetUserGroup("admin")
+	else play:SetUserGroup("guest") end
+
 	return true
 end
 
@@ -240,17 +263,6 @@ function META:CanUserTarget(x)
 	return self:GetImmunity() >= x:GetImmunity()
 end
 
-timer.Create("Mercury:OverrideAdmin",0.1,1,function() -- This is just in case you have something weird tampering with these functions. THEY ARE MINE.
-	function metaplayer:IsAdmin()
-			if !Mercury.Ranks.RankTable[self:GetRank()] then return false end
-		return Mercury.Ranks.RankTable[self:GetRank()].admin or Mercury.Ranks.RankTable[self:GetRank()].superadmin
-	end
-	function metaplayer:IsSuperAdmin()
-			if !Mercury.Ranks.RankTable[self:GetRank()] then return false end
-		return Mercury.Ranks.RankTable[self:GetRank()].superadmin
-	end
-end)
-
 local rnks = file.Find("mercury/ranks/*.txt","DATA")
 
 for k,v in pairs(rnks) do
@@ -271,6 +283,18 @@ for k,v in pairs(rnks) do
 	Mercury.Ranks.RankTable[index] = rtab
 end
 
+function Mercury.Ranks.UpdateUserGroups(rank)
+	local gax = Mercury.Ranks.RankTable[rank]
+	if !gax then return end
+
+	for _, play in pairs(player.GetAll()) do
+		if play._RANK ~= rank then continue end
+		
+		if gax.superadmin then play:SetUserGroup("superadmin")
+		elseif gax.admin then play:SetUserGroup("admin")
+		else play:SetUserGroup("guest") end
+	end
+end
 
 function Mercury.Ranks.SendRankUpdateToClients()
 	net.Start("Mercury:RankData")

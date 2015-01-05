@@ -2,6 +2,7 @@ Mercury.Ranks = {}
 Mercury.Ranks.RankTable = {}
 Mercury.Ranks.AdminRanks = {}
 Mercury.Ranks.__TEAMACCESS = {}
+
 Mercury.Ranks.RankTable["default"] =  { -- MARS is dependent on this rank.
 	title = "Guest",
 	order = 99999,
@@ -10,6 +11,17 @@ Mercury.Ranks.RankTable["default"] =  { -- MARS is dependent on this rank.
 	immunity = -1000,
 	admin = false,
 	superadmin = false,
+}
+
+Mercury.Ranks.RankTable["owner"] = {
+	color = Color(255,255,255),
+	title = "Owner",
+	privileges = {"@allcmds@"},
+	immunity = 1000,
+	order = 1,
+	admin = true,
+	superadmin = true
+
 }
 
 net.Receive("Mercury:RankData",function()
@@ -43,14 +55,6 @@ end
 
 function metaplayer:GetRankTable()
 	return Mercury.Ranks.RankTable[self:GetUserGroup()]
-end
-function metaplayer:IsAdmin()
-	if !Mercury.Ranks.RankTable[self:GetUserGroup()] then return false end
-	return Mercury.Ranks.RankTable[self:GetUserGroup()].admin or Mercury.Ranks.RankTable[self:GetUserGroup()].superadmin
-end
-function metaplayer:IsSuperAdmin()
-		if !Mercury.Ranks.RankTable[self:GetUserGroup()] then return false end
-	return Mercury.Ranks.RankTable[self:GetUserGroup()].superadmin
 end
 function metaplayer:GetImmunity()
 		return Mercury.Ranks.RankTable[self:GetUserGroup()].immunity

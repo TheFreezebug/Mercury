@@ -8,23 +8,10 @@ Mercury.Config = {
 
 } 
  
-////////////////////////////
-/////MILLIONS OF PIECES/////
-/////PIECES FOR MEEEE~!/////
-////////////////////////////
-
-
-
 if SERVER then AddCSLuaFile("mercury/config.lua") end
 include("mercury/config.lua")
-///////////////////////////////////////////////////////////////////
-////////////////////EXPLOSION NOISE////////////////////////////////
-///////////////////////////////////////////////////////////////////
 
- 
-  
-print("Initialzing Mercury.") // Its truuuuuuuuuuuuuuuuue~ 
-/// That it kicks you in the teeth when you're least expecting.
+print("Initialzing Mercury.")
 local function mtag(...)
 	MsgC(Color(100,255,100),"[Mercury]: ")
 end
@@ -37,19 +24,18 @@ if SERVER then
 		else
 			  	MsgC(Color(0,255,0)," OK. \n")
 	end
-///////////DO THE D.A.N.C.E 
-///////////////// 1 2 3 4 5
+	
 	AddCSLuaFile()  
 
 	for _,f in pairs(file.Find("mercury/core/lib/*.lua","LUA")) do
-		local S,ER =	pcall(function() include("mercury/core/lib/" .. f) end) // OUCH!!!! MY MEMORY!!!
+		local S,ER =	pcall(function() include("mercury/core/lib/" .. f) end)
 		if (S) then print("Loaded LIBRARY: " .. f) else
 			 Msg("[Mercury]: " .. ER)
 		end
 	end
 
 	for _,f in pairs(file.Find("mercury/core/*.lua","LUA")) do
-		local S,ER =	pcall(function() include("mercury/core/" .. f) end) // OUCH!!!! MY MEMORY!!!
+		local S,ER =	pcall(function() include("mercury/core/" .. f) end)
 		if (S) then print("Loaded CORE: " .. f) else
 			 Msg("[Mercury]: " .. ER)
 		end
@@ -61,7 +47,7 @@ if SERVER then
 		end
 	end
 	for _,f in pairs(file.Find("mercury/core/extensions/*.lua","LUA")) do
-		local S,ER =	pcall(function() include("mercury/core/extensions/" .. f) end) // OUCH!!!! MY MEMORY!!!
+		local S,ER =	pcall(function() include("mercury/core/extensions/" .. f) end)
 		if (S) then print("Loaded: " .. f) else
 	 		 Msg("[Mercury]: " .. ER)
 		end
