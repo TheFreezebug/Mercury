@@ -135,12 +135,19 @@ hook.Add("Initialize", "Mercury:Restrictions", function()
 		return true
 	end
 
+	function Mercury.Restrictions.GiveWeapon(play, weapon)
+		play._ALLOWEAPON = true
+		local Weapon = play:Give(weapon)
+		play._ALLOWEAPON = nil
+		return Weapon
+	end
+
 	hook.Add("PlayerSpawnSWEP", "Mercury:Restrictions", function(play, wepon, tbl)
 		local Restrictions = Mercury.Ranks.GetProperty(play:GetRank(), "restrictions")
 		
 		if !Restrictions or !Restrictions.Weaps then return end
 		
-		if Restrictions.Weaps[class] then
+		if Restrictions.Weaps[class] and !play._ALLOWEAPON then
 			Mercury.Util.SendMessage(play, {"Your not allowed to spawn this weapon!"})
 			return false
 		end
