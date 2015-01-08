@@ -22,28 +22,10 @@ local rankdefs = {
 	admin = false,
 	superadmin = false
 
-<<<<<<< HEAD
 	}
 RNKDFS = rankdefs
 
 Mercury.Ranks.RankTable["default"] = {
-=======
-}
-
-Mercury.Ranks.RankTable["owner"] = {
-	color = Color(255,255,255),
-	title = "Owner",
-	privileges = {"@allcmds@"},
-	immunity = 1000,
-	order = 1,
-	admin = true,
-	superadmin = true
-
-}
-
-local function GetTemplateRank()
-	return {
->>>>>>> origin/master
 	color = Color(100,100,100),
 	title = "Guest",
 	privileges = {""},
@@ -54,7 +36,6 @@ local function GetTemplateRank()
 
 }
 
-<<<<<<< HEAD
 Mercury.Ranks.RankTable["owner"] = {
 	color = Color(255,255,255),
 	title = "Owner",
@@ -70,8 +51,6 @@ local function GetTemplateRank()
 	return table.Copy(rankdefs)
 end 
 
-=======
->>>>>>> origin/master
 local function mtag(...)
 	MsgC(Color(100,255,100),"[Mercury-Ranks]: ")
 end
