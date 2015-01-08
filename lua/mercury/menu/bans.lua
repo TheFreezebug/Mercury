@@ -1,5 +1,5 @@
   local MenuTab = {}
-  MenuTab.index = "Bans" //Internal identifier for table
+  MenuTab.index = 3 //Internal identifier for table
   MenuTab.Name = "Bans" // Display name 
   MenuTab.Desc = "Server Bans" // Description 
   MenuTab.Icon = "icon16/heart.png" // Icon
@@ -11,10 +11,12 @@ local gotchunks = 0
 local function DoLayout(gframe,bantable)
 			if !IsValid(gframe) then return false end
 			local steamid = ""
+			local selban = nil
 			local ctrl = vgui.Create( "DListView", gframe)
 			ctrl:AddColumn( "Steam ID" )
 			ctrl:AddColumn( "Time left" )
 			ctrl:AddColumn( "Banning Administrator" )
+			ctrl:AddColumn( " Reason " )
 			ctrl:SetSize( 450, 400 )	
 			ctrl:SetPos( 10, 10 )
 				
@@ -24,19 +26,69 @@ local function DoLayout(gframe,bantable)
 			UnbanButton:SetDisabled(true)
 			UnbanButton:SetSize(170,30)
 
+			local ReasonLabel = vgui.Create( "DLabel", gframe )
+			ReasonLabel:SetPos( 460, 32 )
+			ReasonLabel:SetText( "Reason" )
+			ReasonLabel:SetTextColor(Color(1,1,1,255))
+
+			local ReasonBox = vgui.Create( "DTextEntry", gframe)
+			ReasonBox:SetPos(460, 50)
+			ReasonBox:SetSize( 170, 16)
+			ReasonBox:SetText( "Select a ban" )
+
+
+
+			local TimeLabel = vgui.Create( "DLabel", gframe )
+			TimeLabel:SetPos( 460, 64 )
+			TimeLabel:SetText( "Time" )
+			TimeLabel:SetTextColor(Color(1,1,1,255))
+
+			local TimeBox = vgui.Create( "DTextEntry", gframe)
+			TimeBox:SetPos(460, 80)
+			TimeBox:SetSize( 170, 16 )
+			TimeBox:SetText( "?" )
+
+
+			local UpdateButton = vgui.Create( "DButton" , gframe)
+			UpdateButton:SetPos( 460,  120 )
+			UpdateButton:SetText( "Update Ban" )
+			UpdateButton:SetDisabled(true)
+			UpdateButton:SetSize(170,30)
+
+			
+				UpdateButton.DoClick = function( self )
+				print("hi")
+					if !selban then return false end
+							net.Start("Mercury:Commands")
+										net.WriteString("banid")
+										net.WriteTable({steamid,TimeBox:GetValue(),ReasonBox:GetValue()})
+
+							net.SendToServer()
+							surface.PlaySound("mercury/mercury_ok.ogg")
+
+
+				end
+
 
 
 			function ctrl:OnRowSelected(lineid,isselected)
 				local line_obj = self:GetLine(lineid)
 				surface.PlaySound("buttons/button6.wav")
 				UnbanButton:SetDisabled(false)
+				UpdateButton:SetDisabled(false)
 				steamid = line_obj.ban.STEAMID
-				print(steamid)
+				selban = line_obj.ban
+				ReasonBox:SetValue(selban.reason)
+				if selban["TimeRemaining"] == "Never" then 
+					TimeBox:SetValue("0")
+				else
+					TimeBox:SetValue(selban.TimeRemaining)
+				end
 				return true
 			end
 			for k, ply in pairs( bandata ) do
 
-				local item = ctrl:AddLine( ply.STEAMID,ply["TimeRemaining"],ply["bannedby"] )
+				local item = ctrl:AddLine( ply.STEAMID,ply["TimeRemaining"],ply["bannedby"],ply["reason"] )
 				item.ban = ply
 			end	
 
@@ -53,12 +105,7 @@ local function DoLayout(gframe,bantable)
 			 		rootwindow:SetTitle( "Mercury - Warning" )
 					rootwindow:SetVisible( true )
 					rootwindow:MakePopup()
-					function rootwindow:Paint(w,h)
-						    draw.RoundedBox( 0, 0, 0, w, h, Color( 104,134, 200, 220 ) )
-						    surface.SetMaterial( Material("icon16/error.png") ) 
-						   	surface.SetDrawColor(Color(255,255,255,255))
-						    surface.DrawTexturedRect(12,40,32,32)
-					end
+			
 						local DLabel = vgui.Create( "DLabel", rootwindow )
 						DLabel:SetPos( 60, 50 )
 						DLabel:SetText( "Really unban " .. steamid .. "?" )
@@ -77,7 +124,9 @@ local function DoLayout(gframe,bantable)
 									local lid = ctrl:GetSelectedLine()
 									ctrl:RemoveLine(lid)	
 									UnbanButton:SetDisabled(true)
+									UpdateButton:SetDisabled(true)
 									rootwindow:Close()
+									selban = nil
 									
 							end
 						local DenyUnban = vgui.Create( "DButton" , rootwindow)
@@ -92,10 +141,7 @@ local function DoLayout(gframe,bantable)
 
 
 			end
-				function UnbanButton:Paint(w,h)
-					    draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 200, 200, 255 ) )
-				end
-
+	
 
 
 

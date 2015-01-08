@@ -262,3 +262,39 @@ function MCMD.GenerateMenu(frame)
 end
 
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
+
+
+
+MCMD = {}
+MCMD.Command = "changelevel" 
+MCMD.Verb = "changed the map"
+MCMD.RconUse = true
+MCMD.Useage = "<player>"
+MCMD.UseImmunity = true
+MCMD.PlayerTarget = false
+MCMD.HasMenu = false
+
+
+
+function callfunc(caller,args)
+	if !args[1] then return false,"No map specified." end
+	if !file.Exists("maps/" .. args[1] .. ".bsp","GAME") then return false,"Map does not exist." end
+
+	RunConsoleCommand("changelevel",unpack(args))
+
+
+	return true,"",false,{} //RETURN CODES.
+	// First argument true / false -- Command succeeded? 
+	// Second argument: String error, if first argument is false this is pushed to the client.
+	// Third argument true / false -- supress default messages
+	// Fourth argument table, the message to print to chat if second argument is true.
+
+end
+
+
+function MCMD.GenerateMenu(frame)
+
+end
+
+Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
+

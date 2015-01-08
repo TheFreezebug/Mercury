@@ -44,7 +44,7 @@ Mercury.Commands.PlayerLookup = plookup
 
 
 
-function Mercury.Commands.Call(caller,command,args,silent) // Here I cum ~<3
+function Mercury.Commands.Call(caller,command,args,silent) 
 
 
 	if !command then return false,"No command specified." end
@@ -222,7 +222,11 @@ concommand.Add("hgs",function(P,C,A)
 		print(err)
 	end
 end)
-net.Receive("Mercury:Commands",function(_,P)
+net.Receive("Mercury:Commands",function(len,P)
+	if len and len > 0xFFF then // Thanks !cake
+			P:SendLua('Mercury.Menu.ShowErrorCritical([[Net buffer is too large. \n]] .. [[ ' .. debug.traceback()  .. '"]] )')
+		return "OH SHIT, INCOMING"
+	end
 
 	local command = ""
 	local argtab = {}

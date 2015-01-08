@@ -1,5 +1,5 @@
   local MenuTab = {}
-  MenuTab.index = "ranks" //Internal identifier for table
+  MenuTab.index = 2 //Internal identifier for table
   MenuTab.Name = "Ranks" // Display name 
   MenuTab.Desc = "Ranks" // Description 
   MenuTab.Icon = "icon16/user.png" // Icon
@@ -27,8 +27,10 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 				net.WriteString("ranksetindex")
 				net.WriteTable({rindex,IndexBox:GetValue()})
 				rindex = string.lower(IndexBox:GetValue())
-				line.__RANKINDEX = string.lower(IndexBox:GetValue())
-				line:SetValue(string.lower(IndexBox:GetValue()))
+				line.__RANKINDEX = rindex
+				line:SetColumnText(1,rindex)
+				line:InvalidateLayout()
+				
 			net.SendToServer()
 		end
 
@@ -167,7 +169,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 			AddCommandButton:SetDisabled(true)
 			AddCommandButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("buttons/button3.wav") end
+				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
 				local xg = currentcommands:AddLine(selected_index)
 				xg.privilege = selected_index
 				local lid = nocommands:GetSelectedLine()
@@ -190,7 +192,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 			RemCommandButton:SetDisabled(true)
 			RemCommandButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("buttons/button3.wav") end
+				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
 
 				local xg = nocommands:AddLine(selected_index)
 				xg.privilege = selected_index
@@ -234,10 +236,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 				function gframe:GetWindow()
 					return CONTAINER
 				end
-				function gframe:Paint(w,h)
-					    draw.RoundedBox( 0, 0, 0, w, h, Color( 200, 200, 200, 255 ) )
-				end
-
+		
 
 			local Mixer = vgui.Create( "DColorMixer", gframe )
 			Mixer:Dock( FILL )			--Make Mixer fill place of Frame
@@ -276,12 +275,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 			 		rootwindow:SetTitle( "Mercury - Warning" )
 					rootwindow:SetVisible( true )
 					rootwindow:MakePopup()
-					function rootwindow:Paint(w,h)
-						    draw.RoundedBox( 0, 0, 0, w, h, Color( 104,134, 200, 220 ) )
-						    surface.SetMaterial( Material("icon16/error.png") ) 
-						   	surface.SetDrawColor(Color(255,255,255,255))
-						    surface.DrawTexturedRect(12,40,32,32)
-					end
+				
 						local DLabel = vgui.Create( "DLabel", rootwindow )
 						DLabel:SetPos( 60, 50 )
 						DLabel:SetText( "Are you sure you want to delete this rank? (This cannot be undone) " )
@@ -314,10 +308,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 
 
 			end
-				function DeleteRankButton:Paint(w,h)
-					    draw.RoundedBox( 0, 0, 0, w, h, Color( 255, 200, 200, 255 ) )
-				end
-
+			
 
 	/*surface.PlaySound("mercury/mercury_error.ogg")
 	local rootwindow = vgui.Create( "DFrame" ) // Actual window frame
@@ -326,12 +317,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
  		rootwindow:SetTitle( "Mercury - Error" )
 		rootwindow:SetVisible( true )
 		rootwindow:MakePopup()
-		function rootwindow:Paint(w,h)
-			    draw.RoundedBox( 0, 0, 0, w, h, Color( 104,134, 255, 250 ) )
-			    surface.SetMaterial( Material("icon16/exclamation.png") ) 
-			   	surface.SetDrawColor(Color(255,255,255,255))
-			    surface.DrawTexturedRect(12,40,32,32)
-		end
+
 
 		local DLabel = vgui.Create( "DLabel", rootwindow )
 		DLabel:SetPos( 60, 50 )
@@ -390,7 +376,13 @@ end
 	end
 	function ctrl:Regenerate()
 		self:Clear()
+			local sortab = {}
 			for k,v in pairs(Mercury.Ranks.RankTable) do
+				v._INDEX = k
+				sortab[v.order] = v 
+			end
+			for k,v in pairs(sortab) do
+				k = v._INDEX
 		 		local line = ctrl:AddLine(k,v.title)
 		 		local menutab = table.Copy(v)
 		 		menutab._RANKINDEX = k // so much hax.
@@ -401,6 +393,7 @@ end
 	function ctrl:OnClickLine(line,isselected)
 		if self.LastSelectedRow and IsValid(self.LastSelectedRow) then self.LastSelectedRow:SetSelected(false) end
 		if self:GetWindow().CurrentRankGFrame then self:GetWindow().CurrentRankGFrame:Remove() end
+		
 			local gframe = vgui.Create( "ContextBase" , CONTAINER )
 			gframe:SetSize( 390, 400 )
 			gframe:SetPos(225,10)
@@ -427,8 +420,7 @@ end
 			NewRankButton:SetSize( 210, 40 )
 			NewRankButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				surface.PlaySound("buttons/button3.wav")
-
+				surface.PlaySound("mercury/mercury_ok.ogg")
 				net.Start("Mercury:Commands")
 					net.WriteString("rankadd")
 					net.WriteTable({"new_rank","New Rank","100,100,100"})

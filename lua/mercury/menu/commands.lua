@@ -46,9 +46,8 @@
 			function gframe:GetWindow()
 				return comwindow
 			end
-			function gframe:Paint(w,h)
-				    draw.RoundedBox( 0, 0, 0, w, h, Color( 100, 255, 100, 10 ) )
-			end
+	
+	
 			self:GetWindow().CurrentGFrame = gframe
 			if line.PluginTable then 
 				if line.PluginTable.GenerateMenu then
@@ -63,7 +62,7 @@
 	ctrl:SetMultiSelect(false)
 
 
-	for k,v in pairs( Mercury.Commands.CommandTable ) do
+	for k,v in SortedPairs( Mercury.Commands.CommandTable , false ) do
 		if LocalPlayer():HasPrivilege(k) then
 			if v.HasMenu == true then 
 
