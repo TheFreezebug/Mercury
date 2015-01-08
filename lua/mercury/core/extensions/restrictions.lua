@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 Mercury.Restrictions = { }  // Made by Rusketh
 
 
@@ -6,6 +7,15 @@ Mercury.Restrictions = { }  // Made by Rusketh
 Mercury.Ranks.AddRankProperty( "restrictions", "table", { Tools = {},  Weaps = {}, Sents = {}} )
   
 local function LoadRestrictions()
+=======
+Mercury.Restrictions = { }
+
+Mercury.Commands.AddPrivilege("nolimits")
+
+Mercury.Ranks.AddRankProperty( "restrictions", "table", {} )
+
+hook.Add("Initialize", "Mercury:Restrictions", function()
+>>>>>>> origin/master
 
 /* --- --------------------------------------------------------------------------------
 	@: No Limits
@@ -21,12 +31,21 @@ local function LoadRestrictions()
 		
 		return -1
 	end
+<<<<<<< HEAD
     
 /* --- --------------------------------------------------------------------------------
 	@: Tools
    --- */ 
 
 	
+=======
+   
+/* --- --------------------------------------------------------------------------------
+	@: Tools
+   --- */
+
+	if !GAMEMODE.IsSandboxDerived then 
+>>>>>>> origin/master
 		local TOOLS = weapons.GetStored("gmod_tool").Tool
 
 		function Mercury.Restrictions.RestrictTool(index, toolmode, blocked)
@@ -45,8 +64,12 @@ local function LoadRestrictions()
 
 			Restrictions.Tools[toolmode] = blocked and true or nil
 
+<<<<<<< HEAD
 				local sts, err = Mercury.Ranks.ModProperty(index,"restrictions",Restrictions)
 				if !sts then return sts,err end
+=======
+			Mercury.Ranks.SaveRank(index, gax)
+>>>>>>> origin/master
 
 			return true
 		end
@@ -57,16 +80,25 @@ local function LoadRestrictions()
 			if !Restrictions or !Restrictions.Tools then return end
 			
 			if Restrictions.Tools[toolmode] then
+<<<<<<< HEAD
 				Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to use this tool!"})
 				return false
 			end
 		end )
 	
+=======
+				Mercury.Util.SendMessage(play, {"Your not allowed to use this tool!"})
+				return false
+			end
+		end )
+	end
+>>>>>>> origin/master
 
 /* --- --------------------------------------------------------------------------------
 	@: Sents
    --- */
 
+<<<<<<< HEAD
 	local SENTS = { 
 	["item_ammo_357"]= true,
 	["item_ammo_ar2"]= true,
@@ -103,6 +135,9 @@ local function LoadRestrictions()
 
 
 	}
+=======
+	local SENTS = { }
+>>>>>>> origin/master
 
 		for _, Sent in pairs(scripted_ents.GetSpawnable() ) do
 			SENTS[Sent.ClassName] = Sent
@@ -123,8 +158,13 @@ local function LoadRestrictions()
 		if !Restrictions.Sents then Restrictions.Sents = { } end
 
 		Restrictions.Sents[sent] = blocked and true or nil
+<<<<<<< HEAD
  		local sts, err = Mercury.Ranks.ModProperty(index,"restrictions",Restrictions)
 		if !sts then return sts,err end
+=======
+
+		Mercury.Ranks.SaveRank(index, gax)
+>>>>>>> origin/master
 
 		return true
 	end
@@ -135,7 +175,11 @@ local function LoadRestrictions()
 		if !Restrictions or !Restrictions.Sents then return end
 		
 		if Restrictions.Sents[class] then
+<<<<<<< HEAD
 			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this!"})
+=======
+			Mercury.Util.SendMessage(play, {"Your not allowed to spawn this!"})
+>>>>>>> origin/master
 			return false
 		end
 	end )
@@ -150,7 +194,11 @@ local function LoadRestrictions()
 		WEAPS[Weap.ClassName] = true
 	end
 
+<<<<<<< HEAD
 	function Mercury.Restrictions.RestrictWeapon(index, weapon, blocked)
+=======
+	function Mercury.Restrictions.RestrictWepon(index, weapon, blocked)
+>>>>>>> origin/master
 		local gax = Mercury.Ranks.RankTable[index]
 		if !gax then return false, "RANK DOES NOT EXIST" end
 		if !WEAPS[weapon] then return false, "WEAPON DOES NOT EXIST" end
@@ -165,8 +213,13 @@ local function LoadRestrictions()
 		if !Restrictions.Weaps then Restrictions.Weaps = { } end
 
 		Restrictions.Weaps[weapon] = blocked and true or nil
+<<<<<<< HEAD
 		local sts, err = Mercury.Ranks.ModProperty(index,"restrictions",Restrictions)
 		if !sts then return sts,err end
+=======
+
+		Mercury.Ranks.SaveRank(index, gax)
+>>>>>>> origin/master
 
 		return true
 	end
@@ -178,6 +231,7 @@ local function LoadRestrictions()
 		return Weapon
 	end
 
+<<<<<<< HEAD
 	hook.Add("PlayerSpawnSWEP", "Mercury:Restrictions", function(play, Weapon, tbl)
 		local Restrictions = Mercury.Ranks.GetProperty(play:GetRank(), "restrictions")
 
@@ -187,10 +241,20 @@ local function LoadRestrictions()
 		if Restrictions.Weaps[Weapon] and !play._ALLOWEAPON then
 		
 			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this weapon!"})
+=======
+	hook.Add("PlayerSpawnSWEP", "Mercury:Restrictions", function(play, wepon, tbl)
+		local Restrictions = Mercury.Ranks.GetProperty(play:GetRank(), "restrictions")
+		
+		if !Restrictions or !Restrictions.Weaps then return end
+		
+		if Restrictions.Weaps[class] and !play._ALLOWEAPON then
+			Mercury.Util.SendMessage(play, {"Your not allowed to spawn this weapon!"})
+>>>>>>> origin/master
 			return false
 		end
 	end )
 
+<<<<<<< HEAD
 	hook.Add("PlayerGiveSWEP", "Mercury:Restrictions", function(play, Weapon, tbl)
 		local Restrictions = Mercury.Ranks.GetProperty(play:GetRank(), "restrictions")
 	
@@ -198,15 +262,28 @@ local function LoadRestrictions()
 	
 		if Restrictions.Weaps[Weapon] then
 			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this weapon!"})
-			return false
-		end
-	end )
-
-	hook.Add("PlayerCanPickupWeapon", "Mercury:Restrictions", function(play, Weapon)
+=======
+	hook.Add("PlayerGiveSWEP", "Mercury:Restrictions", function(play, wepon, tbl)
 		local Restrictions = Mercury.Ranks.GetProperty(play:GetRank(), "restrictions")
 		
 		if !Restrictions or !Restrictions.Weaps then return end
 		
+		if Restrictions.Weaps[class] then
+>>>>>>> origin/master
+			return false
+		end
+	end )
+
+<<<<<<< HEAD
+	hook.Add("PlayerCanPickupWeapon", "Mercury:Restrictions", function(play, Weapon)
+=======
+	hook.Add("PlayerCanPickupWeapon", "Mercury:Restrictions", function(play, wepon)
+>>>>>>> origin/master
+		local Restrictions = Mercury.Ranks.GetProperty(play:GetRank(), "restrictions")
+		
+		if !Restrictions or !Restrictions.Weaps then return end
+		
+<<<<<<< HEAD
 		if Restrictions.Weaps[Weapon:GetClass()] then
 			return false
 		end
@@ -216,3 +293,10 @@ end
 
 hook.Add("Initialize", "Mercury:Restrictions",LoadRestrictions)
 pcall(LoadRestrictions)
+=======
+		if Restrictions.Weaps[wepon:GetClass()] then
+			return false
+		end
+	end ) 
+end)
+>>>>>>> origin/master

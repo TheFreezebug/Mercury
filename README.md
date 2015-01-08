@@ -8,6 +8,11 @@ SUI_SCOREBOARD comes recomended to use alongside this admin mod.
 https://github.com/ZionDevelopers/sui-scoreboard/
 
 How to set it up
+
+Credit to Vercas for his incredible vNet library
+
+https://github.com/vercas/vNet-for-GMod
+
 =======
 
 First, install Mercury into your addons folder, then proceed to start / restart your server. You should see a few messages in console indicating that Mercury has loaded. The initialzied modules will be listed.
