@@ -446,7 +446,7 @@ end
 
 tabs["sweprest"] = {name = "SWEPs",genfunc = GenerateSwepMenu, icon = "icon16/gun.png",desc = "SWEP restrictions!"}
 tabs["sentrest"] = {name = "Entities",genfunc = GenerateSentsMenu, icon = "icon16/box.png",desc = "SENT Restrictions!"}
-tabs["toolrest"] = {name = "Tools",genfunc = GenerateToolsMenu, icon = "icon16/wrench.png",desc = "SWEP restrictions!"}
+tabs["toolrest"] = {name = "Tools",genfunc = GenerateToolsMenu, icon = "icon16/wrench.png",desc = "TOOL restrictions!"}
 function GenerateTabs(frame,rdata)
 	local prosh = vgui.Create("DPropertySheet", frame) // Property sheet in which everything attaches to.
 
