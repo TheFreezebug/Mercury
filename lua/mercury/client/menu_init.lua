@@ -1,8 +1,8 @@
 local MenuTabs = {}
 Mercury.Menu = {}
 
-	function Mercury.Menu.AddMenuTab(index,icon,name,desc,func) 
-		MenuTabs[index] = { name = name,icon = icon, desc = desc, genfunc = func}
+	function Mercury.Menu.AddMenuTab(index,icon,name,desc,func,chfnk) 
+		MenuTabs[index] = { name = name,icon = icon, desc = desc, genfunc = func,checkfunc = chfnk}
 	end
 
 
@@ -48,17 +48,32 @@ function Mercury.Menu.Open()
  
   
 	for k,v in pairs(MenuTabs) do
+
+		local cf = MenuTabs[k]["checkfunc"]
+
+
+		local shouldgen = true 
+		if (cf) and cf~=nil then 
+			shouldgen = cf()
+
+		end
+	
+			if shouldgen==true then 
 		local window = vgui.Create("DPanel",prosh)
 			// window:DockPadding(2,2,2,2)
 		window:SetSize(640,456)
 		local gtab = MenuTabs[k]
+		
+		
+	
 
 		local gf = MenuTabs[k]["genfunc"]
 		
-		local stat , err = xpcall(gf,function(err) Mercury.Menu.ShowError(err .. " \n " .. debug.traceback()) end,window)
+			local stat , err = xpcall(gf,function(err) Mercury.Menu.ShowError(err .. " \n " .. debug.traceback()) end,window)
 
-		
-		prosh:AddSheet(  gtab.name ,window, gtab.icon , false, false, gtab.desc ) // Register window on propertysheet.
+			
+			prosh:AddSheet(  gtab.name ,window, gtab.icon , false, false, gtab.desc ) // Register window on propertysheet.
+		end
 	end
 end
 

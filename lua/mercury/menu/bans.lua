@@ -2,10 +2,17 @@
   MenuTab.index = 3 //Internal identifier for table
   MenuTab.Name = "Bans" // Display name 
   MenuTab.Desc = "Server Bans" // Description 
-  MenuTab.Icon = "icon16/heart.png" // Icon
+  MenuTab.Icon = "icon16/vcard_delete.png" // Icon
 local bandata = {}
 local totalchunks = 0
 local gotchunks = 0
+
+function MenuTab:ShouldGenerateTab()
+
+	return LocalPlayer():HasPrivilege("viewbans")
+
+
+end
 
 
 local function DoLayout(gframe,bantable)
@@ -200,7 +207,7 @@ No access to privilege "editban" . ]]
 
 end
 
-Mercury.Menu.AddMenuTab(MenuTab.index,MenuTab.Icon,MenuTab.Name,MenuTab.Desc,GenerateMenu) 
+Mercury.Menu.AddMenuTab(MenuTab.index,MenuTab.Icon,MenuTab.Name,MenuTab.Desc,GenerateMenu,MenuTab.ShouldGenerateTab) 
 
 
 

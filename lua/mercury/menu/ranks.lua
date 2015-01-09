@@ -5,6 +5,13 @@
   MenuTab.Icon = "icon16/user.png" // Icon
 
 
+function MenuTab:ShouldGenerateTab()
+
+	return LocalPlayer():HasPrivilege("viewranks")
+
+
+end
+
 
 
 
@@ -523,5 +530,5 @@ end
 
 end
 
-Mercury.Menu.AddMenuTab(MenuTab.index,MenuTab.Icon,MenuTab.Name,MenuTab.Desc,GenerateMenu) 
+Mercury.Menu.AddMenuTab(MenuTab.index,MenuTab.Icon,MenuTab.Name,MenuTab.Desc,GenerateMenu,MenuTab.ShouldGenerateTab) 
 

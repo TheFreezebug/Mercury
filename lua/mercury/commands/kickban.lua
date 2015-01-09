@@ -1,4 +1,4 @@
-Mercury.Commands.AddPrivilege("editban")	
+Mercury.Commands.AddPrivilege("viewbans")	
 
 
 

@@ -307,6 +307,7 @@ Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
 
 
 ///////////////MODIFY SCOREBOARD ORDER///////////////
+Mercury.Commands.AddPrivilege("viewranks")	
 
 MCMD = {}
 MCMD.Command = "ranksetorder"

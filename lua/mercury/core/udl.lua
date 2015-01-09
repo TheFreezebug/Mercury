@@ -23,11 +23,11 @@ function UDL.GetData(data)
 		local uid = SAFESID(data:SteamID())
 		if file.Exists("mercury/users/"..uid..".txt","DATA") then
 			local pts =  file.Read("mercury/users/" .. uid .. ".txt","DATA")
-			print("EXIVAR")
+	
 			return util.JSONToTable(pts)
 
 		else
-			print("BLAKVAR")
+			
 			file.Write("mercury/users/" .. uid .. ".txt",util.TableToJSON({rank = "default"}))
 			return {rank = "default"}
 		end

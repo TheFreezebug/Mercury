@@ -1,4 +1,4 @@
-
+Mercury.Commands.AddPrivilege("viewrestrictions")	
 Mercury.Commands.AddPrivilege("nolimits")
  
 ///// SWEP RESTRICTIONS /////
