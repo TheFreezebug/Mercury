@@ -177,6 +177,36 @@ function Mercury.Ranks.ChangeIndex(index,newindex)
 	return true,"Rank changed successfully."
 end
 
+
+
+function Mercury.Ranks.CopyRank(index,newindex)
+	if !index then return false,"NO INDEX SPECIFIED" end
+	if !newindex then return false,"Rank to change index to not specified." end
+	index = string.lower(index)
+
+
+	if !Mercury.Ranks.RankTable[index] then 
+		return false, "Rank does not exist"
+	end
+	if Mercury.Ranks.RankTable[newindex] then 
+		return false, "Cannot overwrite another rank."
+	end
+	local rankdata = table.Copy(Mercury.Ranks.RankTable[index])
+	rankdata.order = math.random(1,Mercury.Config["TeamOffset"])
+	Mercury.Ranks.RankTable[newindex] = rankdata
+	//Mercury.Ranks.DeleteRank(index)
+	if Mercury.Config["UseTeams"] == true then 
+					
+			team.SetUp( rankdata.order - Mercury.Config["TeamOffset"]  , rankdata.title , rankdata.color, false ) 
+
+	end
+
+	Mercury.Ranks.SaveRank(newindex,rankdata)
+	Mercury.Ranks.SendRankUpdateToClients()
+	
+	return true,"Rank copied successfully."
+end
+
 function Mercury.Ranks.ModProperty(index,property,value)
 	if !index then return false,"NO INDEX SPECIFIED" end
 	if !property then return false,"NO PROPERTY SPECIFIED" end

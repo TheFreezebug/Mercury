@@ -128,7 +128,7 @@ local function LoadRestrictions()
 
 		return true
 	end
-
+ 
 	hook.Add("PlayerSpawnSENT", "Mercury:Restrictions", function(play, class)
 		local Restrictions = Mercury.Ranks.GetProperty(play:GetRank(), "restrictions")
 		

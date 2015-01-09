@@ -398,6 +398,37 @@ end
 
 
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
+
+
+
+
+MCMD = {}
+MCMD.Command = "rankcopy"
+MCMD.Verb = "set the index of"
+MCMD.RconUse = true
+MCMD.Useage = "<index> <new index>"
+MCMD.UseImmunity = false
+MCMD.PlayerTarget = false
+MCMD.HasMenu = false
+
+function callfunc(caller,args)
+	if !args[1] then return false,"No rank specified." end
+	if !args[2] then return false,"New index not specified." end
+	local index = string.lower(args[1])
+	local newindex = string.lower(args[2])
+	if !Mercury.Ranks.RankTable[index] then return false,"Rank did not exist." end
+	local sts,err = Mercury.Ranks.CopyRank(index,newindex)
+	if sts~=true then
+		return false,err
+	end
+
+
+	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," copied the rank ", Color(255,255,255) , args[1] ,Color(47,150,255,255) , " to ", Color(255,255,255) , args[2] ,Color(47,150,255,255) , "." } 
+
+end
+
+
+Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
 /////////////////////////////////////////////
 
 

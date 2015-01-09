@@ -387,6 +387,7 @@ end
 		 		local menutab = table.Copy(v)
 		 		menutab._RANKINDEX = k // so much hax.
 		 		line.RankTable = menutab
+		 		line.RNAME = k
 		 	end
  
 	end
@@ -417,7 +418,7 @@ end
 			local NewRankButton = vgui.Create( "DButton" , CONTAINER)
 			NewRankButton:SetPos( 10,  370 )
 			NewRankButton:SetText( "New Rank" )
-			NewRankButton:SetSize( 210, 40 )
+			NewRankButton:SetSize( 105, 40 )
 			NewRankButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
 				surface.PlaySound("mercury/mercury_ok.ogg")
@@ -428,6 +429,91 @@ end
 				timer.Simple(1,function()
 					ctrl:Regenerate()
 				end)
+
+			end
+
+
+			local NewRankButton = vgui.Create( "DButton" , CONTAINER)
+			NewRankButton:SetPos( 10,  370 )
+			NewRankButton:SetText( "New Rank" )
+			NewRankButton:SetSize( 105, 40 )
+			NewRankButton.DoClick = function(self)
+				if self:GetDisabled()==true then return false end
+				
+				net.Start("Mercury:Commands")
+					net.WriteString("rankadd")
+					net.WriteTable({"new_rank","New Rank","100,100,100"})
+				net.SendToServer()
+				timer.Simple(1,function()
+					ctrl:Regenerate()
+				end)
+
+			end
+
+ 
+			local CopyRankButton = vgui.Create( "DButton" , CONTAINER)
+			CopyRankButton:SetPos( 115,  370 )
+			CopyRankButton:SetText( "Copy Rank" )
+			CopyRankButton:SetSize( 105, 40 )
+			CopyRankButton.DoClick = function(self)
+					if !IsValid(ctrl["LastSelectedRow"]) then return false end
+					if self:GetDisabled()==true then return false end
+					if self.RW and IsValid(self.RW) then self.RW:Remove() end
+					surface.PlaySound("mercury/mercury_error.ogg")
+					local rootwindow = vgui.Create( "DFrame" ) // actual window frame
+					self.RW = rootwindow
+					rootwindow:SetSize( 480, 150 )
+					rootwindow:Center()
+			 		rootwindow:SetTitle( "Mercury - Copy Rank" )
+					rootwindow:SetVisible( true )
+					rootwindow:MakePopup()
+			
+						local DLabel = vgui.Create( "DLabel", rootwindow )
+						DLabel:SetPos( 60, 50 )
+						DLabel:SetText( "You are copying the rank " .. ctrl.LastSelectedRow.RNAME .. ". Specify an index for the new rank")
+						DLabel:SetColor(Color(255,255,255))
+						DLabel:SizeToContents()
+
+							local OrderBox = vgui.Create( "DTextEntry", rootwindow )
+							OrderBox:SetPos( 60, 75 )
+							OrderBox:SetSize( 370, 16 )
+				
+
+
+
+						local ConfirmCopyButton = vgui.Create( "DButton" , rootwindow)
+						ConfirmCopyButton:SetPos( 60,100)
+						ConfirmCopyButton:SetText( "Confirm and Copy" )
+						ConfirmCopyButton:SetSize( 370, 40 )
+						ConfirmCopyButton.DoClick = function(x)
+							if self:GetDisabled()==true then return false end
+							
+							net.Start("Mercury:Commands")
+								net.WriteString("rankcopy")
+								net.WriteTable({ctrl.LastSelectedRow.RNAME,tostring(OrderBox:GetValue())})
+							net.SendToServer()
+							timer.Simple(1,function()
+								ctrl:Regenerate()
+							end)
+								surface.PlaySound("mercury/mercury_info.ogg")
+								self.RW:Remove()
+						end
+
+
+
+
+
+		
+			//	surface.PlaySound("mercury/mercury_ok.ogg")
+				//net.Start("Mercury:Commands")
+					//net.WriteString("rankadd")
+					//net.WriteTable({"new_rank","New Rank","100,100,100"})
+				//net.SendToServer()
+		//		timer.Simple(1,function()
+		///			ctrl:Regenerate()
+			///	end)
+
+
 
 			end
 
