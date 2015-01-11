@@ -356,6 +356,22 @@ end)
 timer.Create("Mercury_UpdatePlayerInfo",0.5,0,function()
 	for k,v in pairs(player.GetAll()) do 
 		v:SetNWString("UserRank",v:GetRank())
+		pcall(function()
+			local rnk = v:GetRank()
+		
+			local admin =  false
+			local superadmin = false
+			superadmin = Mercury.Ranks.GetProperty(rnk,"superadmin")
+			admin = Mercury.Ranks.GetProperty(rnk,"admin")
+			if admin and not superadmin then 
+				v:SetuserGroup("admin")
+			elseif superadmin then
+				v:SetUserGroup("superadmin") // gib adam pls
+			elseif not superadmin and not admin then 
+				v:SetUserGroup("guest")
+			end
+
+		end)
 		pcall( function()
 			if Mercury.Config["UseTeams"] == true then 
 					v:SetTeam(Mercury.Ranks.RankTable[v:GetRank()].order  - Mercury.Config["TeamOffset"] )
