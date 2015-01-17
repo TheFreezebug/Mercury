@@ -188,13 +188,7 @@ Just a sec, waiting on the server. ]]
 			    end 
 			    
 		  end
-		   	  if LocalPlayer():HasPrivilege("editban")~=true then 
- 	  bstr = [[Mercury Ban System
 
-
-No access to privilege "editban" . ]]
- 	  return 
- 	end
  	
  	 
 	timer.Simple(2,function()
