@@ -8,6 +8,10 @@ Mercury.Config = {
 
 } 
  
+
+ CreateConVar( "mercury_version", Mercury.Version , FCVAR_SPONLY , "Current version of mercury.") 
+
+ 
 if SERVER then AddCSLuaFile("mercury/config.lua") end
 include("mercury/config.lua")
 

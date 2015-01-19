@@ -378,7 +378,7 @@ function MCMD.GenerateMenu(frame)
 			local TextEntry = vgui.Create( "DTextEntry", frame )	-- create the form as a child of frame
 			TextEntry:SetPos( 10, 20 )
 			TextEntry:SetSize( 130, 20 )
-			TextEntry:SetText( "Banned by administrator" )
+			TextEntry:SetText( "UnBanned by administrator" )
 
 
 
@@ -394,7 +394,7 @@ function MCMD.GenerateMenu(frame)
 
 			local DButtonRmsel = vgui.Create( "DButton" , frame)
 			DButtonRmsel:SetPos( 10, 180 )
-			DButtonRmsel:SetText( "Ban this ID" )
+			DButtonRmsel:SetText( "UnBan this ID" )
 			DButtonRmsel:SetSize( 130, 60 )
 
 			DButtonRmsel.DoClick = function(self)

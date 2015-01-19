@@ -31,7 +31,8 @@ local EXTEND_WEAPONS = {
 	"weapon_rpg",
 	"weapon_shotgun",
 	"weapon_crossbow",
-	"weapon_bugbait"
+	"weapon_bugbait",
+	"weapon_357"
 
 }
 
