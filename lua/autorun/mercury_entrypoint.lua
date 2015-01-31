@@ -1,5 +1,5 @@
 Mercury = {} // Onward!
-Mercury.Version = "GabeN 6"
+Mercury.Version = "HOTEL 0"
 Mercury.Booted = false
 Mercury.Config = {
 	UseScoreboard = true,  // Don't change this! This is designed to contain default config values in case yours get fucked up some how.
@@ -9,7 +9,7 @@ Mercury.Config = {
 } 
  
 
- CreateConVar( "mercury_version", Mercury.Version , FCVAR_SPONLY , "Current version of mercury.") 
+ CreateConVar( "mercury_version", Mercury.Version , FCVAR_REPLICATED , "Current version of mercury.") 
 
  
 if SERVER then AddCSLuaFile("mercury/config.lua") end
