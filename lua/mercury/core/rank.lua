@@ -249,7 +249,7 @@ function Mercury.Ranks.GetProperty(index,property)
 	if !gax then return false,"RANK DID NOT EXIST" end
 	if gax then 
 		if !gax[property] then 
-			return rankdefs[property]
+			return table.Copy(rankdefs)[property] // pointer issues.
 		else 
 			return gax[property]
 		end

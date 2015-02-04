@@ -76,7 +76,13 @@ function Mercury.Commands.Call(caller,command,args,silent)
 		local rsl,err,supress,supresstab 
 		local target 
 		if type(args[1])=="string" then 
-			target = plookup(args[1])
+			if args[1]~="^" then 
+				target = plookup(args[1])
+			else 
+				target = caller
+			end
+
+			
 		elseif type(args[1])=="Player" then 
 			target = args[1]
 
