@@ -5,6 +5,7 @@ local RankTime = {}
 if (!file.Exists("mercury/timedata/","DATA")) then
     file.CreateDir("mercury/timedata/") // Check for directory
 end
+
 function RankTime.SaveSingle(GAX)
   if IsValid(GAX) and GAX:IsPlayer() then
     if !GAX.__TIME or !GAX.TimeLoaded then
@@ -19,12 +20,14 @@ end
        
  
  
+
 function RankTime.SaveAll()
     for k,v in pairs(player.GetAll()) do
         RankTime.SaveSingle(v)
     end
 end
  
+
 function RankTime.PIS(P)
     local uid = P:UniqueID()
     if file.Exists("mercury/timedata/" ..  uid .. ".txt","DATA") then
@@ -38,11 +41,12 @@ function RankTime.PIS(P)
     end
 end
  
+
 for k,v in pairs(player.GetAll()) do
         RankTime.PIS(v)
 end
 local lastsave = 0
- 
+
 function RankTime.Tick()
     pcall(function() // Be safe.
     lastsave = lastsave + 1
@@ -60,11 +64,10 @@ function RankTime.Tick()
     end)
 end
  
-for k,v in pairs(player.GetAll()) do
-    v:ChatPrint(v.__TIME)
-end
+
 
 timer.Create("RankTick",1,0,function()
+
     pcall(function()
         RankTime.Tick()    
     
