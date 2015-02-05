@@ -52,7 +52,9 @@ function RankTime.Tick()
     lastsave = lastsave + 1
     for k,v in pairs(player.GetAll()) do
         if v.TimeLoaded==true then
+            if !v.__TIME then v.__TIME = 0 end
             v.__TIME = v.__TIME + 1
+         
             v:SetNWInt("ranktime",v.__TIME)
         end
     end
