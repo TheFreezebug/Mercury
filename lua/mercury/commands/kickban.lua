@@ -26,7 +26,7 @@ function callfunc(caller,args)
 
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has kicked ", args[1], Color(255,255,255,255) ," (", args[2],")"} //RETURN CODES.
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has kicked ", args[1], Mercury.Config.Colors.Arg ," (", args[2],")"} //RETURN CODES.
 	// First argument true / false -- Command succeeded? 
 	// Second argument: String error, if first argument is false this is pushed to the client.
 	// Third argument true / false -- supress default messages
@@ -129,7 +129,7 @@ function callfunc(caller,args)
 
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has banned ", args[1], " for ", bancolor,timestring," ", Color(255,255,255,255) ," (", args[3],")"} //RETURN CODES.
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has banned ", args[1], " for ", bancolor,timestring," ", Mercury.Config.Colors.Arg ," (", args[3],")"} //RETURN CODES.
 	// First argument true / false -- Command succeeded? 
 	// Second argument: String error, if first argument is false this is pushed to the client.
 	// Third argument true / false -- supress default messages
@@ -148,7 +148,7 @@ function MCMD.GenerateMenu(frame)
 			local ImmuLab = vgui.Create( "DLabel", frame )
 					ImmuLab:SetPos( 240 , 10 )
 					ImmuLab:SetText( "Reason" )
-				ImmuLab:SetTextColor(Color(1,1,1,255))
+				ImmuLab:SetTextColor(Mercury.Config.Colors.Server)
 	
 			local TextEntry = vgui.Create( "DTextEntry", frame )	-- create the form as a child of frame
 			TextEntry:SetPos( 240, 30 )
@@ -159,7 +159,7 @@ function MCMD.GenerateMenu(frame)
 			local TimeLab = vgui.Create( "DLabel", frame )
 			TimeLab:SetPos( 240 , 45 )
 			TimeLab:SetText( "Time (0 = perma)" )
-			TimeLab:SetTextColor(Color(1,1,1,255))
+			TimeLab:SetTextColor(Mercury.Config.Colors.Server)
 			TimeLab:SizeToContentsX()
 			local BanLength = vgui.Create( "DTextEntry", frame )	-- create the form as a child of frame
 			BanLength:SetPos( 240, 60 )
@@ -251,7 +251,7 @@ function callfunc(caller,args)
 
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has banned ", args[1], " for ", bancolor,timestring," ", Color(255,255,255,255) ," (", args[3],")"} //RETURN CODES.
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has banned ", args[1], " for ", bancolor,timestring," ", Mercury.Config.Colors.Arg ," (", args[3],")"} //RETURN CODES.
 	// First argument true / false -- Command succeeded? 
 	// Second argument: String error, if first argument is false this is pushed to the client.
 	// Third argument true / false -- supress default messages
@@ -267,7 +267,7 @@ function MCMD.GenerateMenu(frame)
 			local ImmuLab = vgui.Create( "DLabel", frame )
 					ImmuLab:SetPos( 10 , 0 )
 					ImmuLab:SetText( "Reason" )
-				ImmuLab:SetTextColor(Color(1,1,1,255))
+				ImmuLab:SetTextColor(Mercury.Config.Colors.Server)
 	
 			local TextEntry = vgui.Create( "DTextEntry", frame )	-- create the form as a child of frame
 			TextEntry:SetPos( 10, 20 )
@@ -278,7 +278,7 @@ function MCMD.GenerateMenu(frame)
 			local TimeLab = vgui.Create( "DLabel", frame )
 			TimeLab:SetPos( 10 , 40 )
 			TimeLab:SetText( "Time (0 = perma)" )
-			TimeLab:SetTextColor(Color(1,1,1,255))
+			TimeLab:SetTextColor(Mercury.Config.Colors.Server)
 			TimeLab:SizeToContentsX()
 			local BanLength = vgui.Create( "DTextEntry", frame )	-- create the form as a child of frame
 			BanLength:SetPos( 10, 60 )
@@ -289,7 +289,7 @@ function MCMD.GenerateMenu(frame)
 			local TimeLab = vgui.Create( "DLabel", frame )
 			TimeLab:SetPos( 10 , 80 )
 			TimeLab:SetText( "Steam ID" )
-			TimeLab:SetTextColor(Color(1,1,1,255))
+			TimeLab:SetTextColor(Mercury.Config.Colors.Server)
 			TimeLab:SizeToContentsX()
 			local SteamID = vgui.Create( "DTextEntry", frame )	-- create the form as a child of frame
 			SteamID:SetPos( 10, 100 )
@@ -357,7 +357,7 @@ function callfunc(caller,args)
 
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has unbanned ", args[1], Color(255,255,255,255) ," (", args[2],")"} //RETURN CODES.
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has unbanned ", args[1], Mercury.Config.Colors.Arg ," (", args[2],")"} //RETURN CODES.
 	// First argument true / false -- Command succeeded? 
 	// Second argument: String error, if first argument is false this is pushed to the client.
 	// Third argument true / false -- supress default messages
@@ -373,7 +373,7 @@ function MCMD.GenerateMenu(frame)
 			local ImmuLab = vgui.Create( "DLabel", frame )
 					ImmuLab:SetPos( 10 , 0 )
 					ImmuLab:SetText( "Reason" )
-				ImmuLab:SetTextColor(Color(1,1,1,255))
+				ImmuLab:SetTextColor(Mercury.Config.Colors.Server)
 	
 			local TextEntry = vgui.Create( "DTextEntry", frame )	-- create the form as a child of frame
 			TextEntry:SetPos( 10, 20 )
@@ -385,7 +385,7 @@ function MCMD.GenerateMenu(frame)
 			local TimeLab = vgui.Create( "DLabel", frame )
 			TimeLab:SetPos( 10 , 40 )
 			TimeLab:SetText( "Steam ID" )
-			TimeLab:SetTextColor(Color(1,1,1,255))
+			TimeLab:SetTextColor(Mercury.Config.Colors.Server)
 			TimeLab:SizeToContentsX()
 			local SteamID = vgui.Create( "DTextEntry", frame )	-- create the form as a child of frame
 			SteamID:SetPos( 10, 60 )

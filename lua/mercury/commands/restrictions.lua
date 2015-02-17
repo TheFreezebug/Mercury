@@ -26,7 +26,7 @@ function callfunc(caller,args)
 		if !rsl then 
 			return rsl,err
 		end
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has restricted the swep ", Color(255,255,255) , class ,Color(47,150,255,255)," from ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the swep ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," from ", Color(255,255,255) ,rank }
 
 	end
 
@@ -37,7 +37,7 @@ function callfunc(caller,args)
 			return rsl,err
 		end
 		
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has allowed the swep ", Color(255,255,255) , class ,Color(47,150,255,255)," to ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the swep ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," to ", Color(255,255,255) ,rank }
 
 	end
 
@@ -80,7 +80,7 @@ function callfunc(caller,args)
 		if !rsl then 
 			return rsl,err
 		end
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has restricted the entity ", Color(255,255,255) , class ,Color(47,150,255,255)," from ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the entity ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," from ", Color(255,255,255) ,rank }
 
 	end
 
@@ -91,7 +91,7 @@ function callfunc(caller,args)
 			return rsl,err
 		end
 		
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has allowed the entity ", Color(255,255,255) , class ,Color(47,150,255,255)," to ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the entity ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," to ", Color(255,255,255) ,rank }
 
 	end
 
@@ -135,7 +135,7 @@ function callfunc(caller,args)
 		if !rsl then 
 			return rsl,err
 		end
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has restricted the tool ", Color(255,255,255) , class ,Color(47,150,255,255)," from ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the tool ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," from ", Color(255,255,255) ,rank }
 
 	end
 
@@ -146,7 +146,7 @@ function callfunc(caller,args)
 			return rsl,err
 		end
 		
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has allowed the tool ", Color(255,255,255) , class ,Color(47,150,255,255)," to ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the tool ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," to ", Color(255,255,255) ,rank }
 
 	end
 

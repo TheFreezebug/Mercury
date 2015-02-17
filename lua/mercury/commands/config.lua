@@ -1,0 +1,1 @@
+Mercury.Commands.AddPrivilege("viewconfig")	

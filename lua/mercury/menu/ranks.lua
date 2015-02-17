@@ -34,7 +34,11 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 				net.WriteString("ranksetindex")
 				net.WriteTable({rindex,IndexBox:GetValue()})
 				rindex = string.lower(IndexBox:GetValue())
-				line._RANKINDEX = rindex
+				line.__RANKINDEX = string.lower(IndexBox:GetValue())
+			
+				line.RNAME = string.lower(IndexBox:GetValue())
+				line:SetValue(1,string.lower(IndexBox:GetValue()))
+
 				line:SetColumnText(1,rindex)
 				line:InvalidateLayout()
 				
@@ -137,7 +141,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 			local nocommands = vgui.Create( "DListView", frame)
 			nocommands:AddColumn( "Availible Commands" )
 			nocommands:SetSize( 150, 150 )	
-			nocommands:SetPos( 25, 70 )
+			nocommands:SetPos( 10 , 70 )
 				
 
 			local currentcommands = vgui.Create( "DListView", frame)
@@ -170,7 +174,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 			
 
 			local AddCommandButton = vgui.Create( "DButton" , frame)
-			AddCommandButton:SetPos( 180,  121 )
+			AddCommandButton:SetPos( 172 ,  121 )
 			AddCommandButton:SetText( "-->" )
 			AddCommandButton:SetSize( 40, 20 )
 			AddCommandButton:SetDisabled(true)
@@ -193,7 +197,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 
 
 			local RemCommandButton = vgui.Create( "DButton" , frame)
-			RemCommandButton:SetPos( 180,  151 )
+			RemCommandButton:SetPos( 172,  151 )
 			RemCommandButton:SetText( "<--" )
 			RemCommandButton:SetSize( 40, 20 )
 			RemCommandButton:SetDisabled(true)
@@ -237,7 +241,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
  
 
 			local gframe = vgui.Create( "ContextBase" , frame)
-				gframe:SetSize( 170, 170 )
+				gframe:SetSize( 165, 170 )
 				gframe:SetPos(220,225)
 				gframe:SetVisible( true )
 				function gframe:GetWindow()
@@ -253,7 +257,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 			Mixer:SetColor( rtab.color )	--Set the default color
 
 			local UpdateColorButton = vgui.Create( "DButton" , frame)
-			UpdateColorButton:SetPos( 135,  225 )
+			UpdateColorButton:SetPos( 130,  225 )
 			UpdateColorButton:SetText( "Update Color" )
 			UpdateColorButton:SetSize( 80, 80 )
 	
@@ -375,7 +379,7 @@ end
 	local ctrl = vgui.Create( "DListView", CONTAINER )
 	ctrl:AddColumn( "Index" )
 	ctrl:AddColumn( "Title" )
-	ctrl:SetSize( 210, 360 )	
+	ctrl:SetSize( 210, 355 )	
 	ctrl:SetPos( 10, 10 )
 	ctrl:SetMultiSelect(false)
 	function ctrl:GetWindow()
@@ -394,6 +398,7 @@ end
 		 		local menutab = table.Copy(v)
 		 		menutab._RANKINDEX = k // so much hax.
 		 		line.RankTable = menutab
+		 		line._RANKINDEX = k
 		 		line.RNAME = k
 		 	end
  
@@ -414,7 +419,7 @@ end
 			end
 			self:GetWindow().CurrentRankGFrame = gframe
 			if line.RankTable then 
-					ApplyTeamData(gframe,line.RankTable,line,line.RankTable._RANKINDEX,ctrl)
+					ApplyTeamData(gframe,line.RankTable,line,line.RNAME,ctrl)
 			end
 			line:SetSelected(true)
 			self.LastSelectedRow = line
@@ -422,26 +427,10 @@ end
 	end
 
 
-			local NewRankButton = vgui.Create( "DButton" , CONTAINER)
-			NewRankButton:SetPos( 10,  370 )
-			NewRankButton:SetText( "New Rank" )
-			NewRankButton:SetSize( 105, 40 )
-			NewRankButton.DoClick = function(self)
-				if self:GetDisabled()==true then return false end
-				surface.PlaySound("mercury/mercury_ok.ogg")
-				net.Start("Mercury:Commands")
-					net.WriteString("rankadd")
-					net.WriteTable({"new_rank","New Rank","100,100,100"})
-				net.SendToServer()
-				timer.Simple(1,function()
-					ctrl:Regenerate()
-				end)
-
-			end
-
+		
 
 			local NewRankButton = vgui.Create( "DButton" , CONTAINER)
-			NewRankButton:SetPos( 10,  370 )
+			NewRankButton:SetPos( 10,  365 )
 			NewRankButton:SetText( "New Rank" )
 			NewRankButton:SetSize( 105, 40 )
 			NewRankButton.DoClick = function(self)
@@ -459,7 +448,7 @@ end
 
  
 			local CopyRankButton = vgui.Create( "DButton" , CONTAINER)
-			CopyRankButton:SetPos( 115,  370 )
+			CopyRankButton:SetPos( 115,  365 )
 			CopyRankButton:SetText( "Copy Rank" )
 			CopyRankButton:SetSize( 105, 40 )
 			CopyRankButton.DoClick = function(self)

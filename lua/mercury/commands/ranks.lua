@@ -31,7 +31,7 @@ function callfunc(caller,args)
 	end
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has created the rank ", Color(255,255,255) , args[1] ,Color(47,150,255,255) , " with the title of ",Color(255,255,255) ,args[2] ,Color(47,150,255,255) , " and ", col , "this color" } //RETURN CODES.
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has created the rank ", Mercury.Config.Colors.Rank , args[1] ,Mercury.Config.Colors.Default , " with the title of ",Mercury.Config.Colors.Rank ,args[2] ,Mercury.Config.Colors.Default , " and ", col , "this color" } //RETURN CODES.
 
 end
 
@@ -61,7 +61,7 @@ function callfunc(caller,args)
 	if rsl~=true then 
 		return false,err
 	end
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has deleted the rank ", Color(255,255,255) , args[1]}
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has deleted the rank ", Mercury.Config.Colors.Rank , args[1]}
 end
 
 
@@ -107,7 +107,7 @@ function callfunc(caller,args)
 		end
 		data[#data + 1] = apriv 
 		Mercury.Ranks.ModProperty(index,"privileges",data)
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has added the privilege ", Color(255,255,255) , apriv,Color(47,150,255,255)," to ", Color(255,255,255) ,index }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has added the privilege ", Mercury.Config.Colors.Rank , apriv,Mercury.Config.Colors.Default," to ", Mercury.Config.Colors.Rank ,index }
 
 	end
 
@@ -138,7 +138,7 @@ function callfunc(caller,args)
 			end
 		end
 		Mercury.Ranks.ModProperty(index,"privileges",data)
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has removed the privilege ", Color(255,255,255) , apriv,Color(47,150,255,255)," from ", Color(255,255,255) ,index }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has removed the privilege ", Mercury.Config.Colors.Rank , apriv,Mercury.Config.Colors.Default," from ", Mercury.Config.Colors.Rank ,index }
 
 	end
 
@@ -191,7 +191,7 @@ function callfunc(caller,args)
 	end
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," changed ", Color(255,255,255) , args[1] .. "'s" ,Color(47,150,255,255) , " color to ", col , "this." } 
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," changed ", Mercury.Config.Colors.Rank , args[1] .. "'s" ,Mercury.Config.Colors.Default , " color to ", col , "this." } 
 
 end
 
@@ -222,7 +222,7 @@ function callfunc(caller,args)
 		return false,err
 	end
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," changed ", Color(255,255,255) , args[1] .. "'s title" ,Color(47,150,255,255) , " to ", Color(255,255,255) , args[2] ,Color(47,150,255,255) , "." } 
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," changed ", Mercury.Config.Colors.Rank , args[1] .. "'s title" ,Mercury.Config.Colors.Default , " to ", Mercury.Config.Colors.Rank , args[2] ,Mercury.Config.Colors.Default , "." } 
 
 end
 
@@ -268,7 +268,7 @@ function callfunc(caller,args)
 			return false,err
 		end
 
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has set ", Color(255,255,255) , index .. "'s" ,Color(47,150,255,255)," superadmin status to ", Color(255,255,255) ,truefalse }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has set ", Mercury.Config.Colors.Rank , index .. "'s" ,Mercury.Config.Colors.Default," superadmin status to ", Mercury.Config.Colors.Rank ,truefalse }
 	end
 
 
@@ -290,7 +290,7 @@ function callfunc(caller,args)
 
 		end
 
-		return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," has set ", Color(255,255,255) , index .. "'s" ,Color(47,150,255,255)," admin status to ", Color(255,255,255) ,truefalse }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has set ", Mercury.Config.Colors.Rank , index .. "'s" ,Mercury.Config.Colors.Default," admin status to ", Mercury.Config.Colors.Rank ,truefalse }
 
 	end
 
@@ -329,7 +329,7 @@ function callfunc(caller,args)
 		return false,err
 	end
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," changed ", Color(255,255,255) , args[1] .. "'s order" ,Color(47,150,255,255) , " to ", Color(255,255,255) , args[2] ,Color(47,150,255,255) , "." } 
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," changed ", Mercury.Config.Colors.Rank , args[1] .. "'s order" ,Mercury.Config.Colors.Default , " to ", Mercury.Config.Colors.Rank , args[2] ,Mercury.Config.Colors.Default , "." } 
 
 end
 
@@ -358,7 +358,7 @@ function callfunc(caller,args)
 	Mercury.UDL.SetSaveRank(args[1],index)
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," set the rank of ", Color(255,255,255) , args[1] ,Color(47,150,255,255) , " to ", Color(255,255,255) , args[2] ,Color(47,150,255,255) , "." } 
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," set the rank of ", Mercury.Config.Colors.Rank , args[1] ,Mercury.Config.Colors.Default , " to ", Mercury.Config.Colors.Rank , args[2] ,Mercury.Config.Colors.Default , "." } 
 
 end
 
@@ -393,7 +393,7 @@ function callfunc(caller,args)
 	end
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," changed the index of ", Color(255,255,255) , args[1] ,Color(47,150,255,255) , " to ", Color(255,255,255) , args[2] ,Color(47,150,255,255) , "." } 
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," changed the index of ", Mercury.Config.Colors.Rank , args[1] ,Mercury.Config.Colors.Default , " to ", Mercury.Config.Colors.Rank , args[2] ,Mercury.Config.Colors.Default , "." } 
 
 end
 
@@ -424,7 +424,7 @@ function callfunc(caller,args)
 	end
 
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," copied the rank ", Color(255,255,255) , args[1] ,Color(47,150,255,255) , " to ", Color(255,255,255) , args[2] ,Color(47,150,255,255) , "." } 
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," copied the rank ", Mercury.Config.Colors.Rank , args[1] ,Mercury.Config.Colors.Default , " to ", Mercury.Config.Colors.Rank , args[2] ,Mercury.Config.Colors.Default , "." } 
 
 end
 
@@ -456,7 +456,7 @@ function callfunc(caller,args)
 		return false,err
 	end
 
-	return true,"heh",true,{Color(1,1,1,255),caller,Color(47,150,255,255)," changed ", Color(255,255,255) , args[1] .. "'s immunity" ,Color(47,150,255,255) , " to ", Color(255,255,255) , args[2] ,Color(47,150,255,255) , "." } 
+	return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," changed ", Mercury.Config.Colors.Rank , args[1] .. "'s immunity" ,Mercury.Config.Colors.Default , " to ", Mercury.Config.Colors.Rank , args[2] ,Mercury.Config.Colors.Default , "." } 
 
 end
 

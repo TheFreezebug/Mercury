@@ -30,7 +30,7 @@
 	///////Create list of plugins and generation functions///////
 	local ctrl = vgui.Create( "DListView", comwindow )
 	ctrl:AddColumn( "Commands" )
-	ctrl:SetSize( 210, 400 )	
+	ctrl:SetSize( 210, 390 )	
 	ctrl:SetPos( 10, 10 )
 	ctrl:SetMultiSelect(false)
 	function ctrl:GetWindow()

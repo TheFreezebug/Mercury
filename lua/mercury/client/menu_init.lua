@@ -27,7 +27,7 @@ function Mercury.Menu.Open()
 
 
 	local prosh = vgui.Create("DPropertySheet", rootwindow) // Property sheet in which everything attaches to.
-	 prosh:SetSize( 640 , 450 )
+	 prosh:Dock(FILL)
 	 prosh:SetPos(0,24)
 
 	 function prosh:GetWindow()

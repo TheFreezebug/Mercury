@@ -108,7 +108,7 @@ function Mercury.Commands.Call(caller,command,args,silent)
 		if rsl==true then 
 			if silent~=true then 
 				if supress~=true then
-					Mercury.Util.Broadcast({Color(1,1,1,255),caller,Color(47,150,255,255), " has " .. com.Verb .." ",target,Color(47,150,255,255), "."})
+					Mercury.Util.Broadcast({Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default, " has " .. com.Verb .." ",target,Mercury.Config.Colors.Default, "."})
 				else
 					if #supresstab > 0 then 
 						Mercury.Util.Broadcast(supresstab)
@@ -152,7 +152,7 @@ function Mercury.Commands.Call(caller,command,args,silent)
 			
 				if supress~=true then
 				
-					Mercury.Util.Broadcast({Color(1,1,1,255),caller,Color(47,150,255,255), " has " .. com.Verb .." ",gabe,Color(47,150,255,255), "."})
+					Mercury.Util.Broadcast({Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default, " has " .. com.Verb .." ",gabe,Mercury.Config.Colors.Default, "."})
 				else
 			
 					if #supresstab > 0 then 
@@ -184,7 +184,7 @@ concommand.Add("hg",function(P,C,A)
 	local argtab = {}
 	command = A[1]
 	if !command then 
-		Mercury.Util.SendMessage(P,{Color(47,150,255,255),"No command specified."})
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,"No command specified."})
 		return false 
 	end
 	if #A > 1 then 
@@ -196,7 +196,7 @@ concommand.Add("hg",function(P,C,A)
 	end
 	local result,err = Mercury.Commands.Call(P,command,argtab,false) 
 	if result~=true and IsValid(P) then 
-		Mercury.Util.SendMessage(P,{Color(47,150,255,255),err})
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,err})
 	end
 	if !IsValid(P) and result~=true then 
 		print(err)
@@ -209,7 +209,7 @@ concommand.Add("hgs",function(P,C,A)
 	local argtab = {}
 	command = A[1]
 	if !command then 
-		Mercury.Util.SendMessage(P,{Color(47,150,255,255),"No command specified."})
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,"No command specified."})
 		return false 
 	end
 	if #A > 1 then 
@@ -221,7 +221,7 @@ concommand.Add("hgs",function(P,C,A)
 	end
 	local result,err = Mercury.Commands.Call(P,command,argtab,true) 
 	if result~=true and IsValid(P) then 
-		Mercury.Util.SendMessage(P,{Color(47,150,255,255),err})
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,err})
 
 	end
 	if !IsValid(P) and result~=true then 
@@ -242,13 +242,13 @@ net.Receive("Mercury:Commands",function(len,P)
 	end)
 	
 	if !command then 
-		Mercury.Util.SendMessage(P,{Color(47,150,255,255),"No command specified."})
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,"No command specified."})
 		return false 
 	end
 
 	local result,err = Mercury.Commands.Call(P,command,argtab,false) 
 	if result~=true and IsValid(P) then 
-		Mercury.Util.SendMessage(P,{Color(47,150,255,255),err})
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,err})
 	end
 	if !IsValid(P) and result~=true then 
 		print(err)
@@ -273,20 +273,20 @@ function Mercury.Commands.ChatHook(Plr,Text,TeamOnly)
 				
 						result,err = Mercury.Commands.Call(Plr,command,argms,false) 
 						if result~=true then 
-							Mercury.Util.SendMessage(Plr,{Color(47,150,255,255),err})
+							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,err})
 						end
 					end
 					if firstsym == "/" then 
 						result,err = Mercury.Commands.Call(Plr,command,argms,false) 
 						if result~=true then 
-							Mercury.Util.SendMessage(Plr,{Color(47,150,255,255),err})
+							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,err})
 						end
 						return ""
 					end
 					if firstsym == "@" then
 						result,err = Mercury.Commands.Call(Plr,command,argms,true) 
 						if result~=true then 
-							Mercury.Util.SendMessage(Plr,{Color(47,150,255,255),err})
+							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,err})
 						end
 						return ""
 					end

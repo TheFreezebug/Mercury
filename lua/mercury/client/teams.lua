@@ -69,6 +69,7 @@ function metaplayer:HasPrivilege(x)
 		end
 		return false 
 end
+/*
 timer.Create("MARS_OverrideAdmin",1,1,function() -- This is just in case you have something weird tampering with these functions. THEY ARE MINE.
 	function metaplayer:IsAdmin()
 			if !Mercury.Ranks.RankTable[self:GetUserRank()] then return false end
@@ -79,7 +80,7 @@ timer.Create("MARS_OverrideAdmin",1,1,function() -- This is just in case you hav
 		return Mercury.Ranks.RankTable[self:GetUserRank()].superadmin
 	end
 end)
-
+*/
 hook.Add("HUDPaint","MInitialRankUpdate",function()
 	net.Start("Mercury:RankData")
 		net.WriteString("GET_RANKS")
@@ -90,5 +91,18 @@ hook.Add("HUDPaint","MInitialRankUpdate",function()
 end)
 
 
-// It makes a clicking noise.
-// Yes it does.
+
+
+
+timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
+
+	function metaplayer:IsAdmin()
+		return self:IsUserGroup("admin") or self:IsUserGroup("superadmin") 
+	end
+
+
+	function metaplayer:IsSuperAdmin()
+		return self:IsUserGroup("superadmin") 
+	end
+
+end)

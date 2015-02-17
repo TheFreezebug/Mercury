@@ -1,5 +1,29 @@
 Mercury.Ranks = {}
-Mercury.Ranks.RankTable = {}
+Mercury.Ranks.RankTable = {
+
+	default = {
+		color = Color(100,100,100),
+		title = "Guest",
+		privileges = {""},
+		immunity = -1000,
+		order = -9999,
+		admin = false,
+		superadmin = false
+
+	},
+
+	owner = {
+		color = Color(255,255,255),
+		title = "Owner",
+		privileges = {"@allcmds@"},
+		immunity = 1000,
+		order = 1,
+		admin = true,
+		superadmin = true
+
+	},
+
+}
 META = FindMetaTable("Player")
 
 
@@ -25,27 +49,6 @@ local rankdefs = {
 	}
 RNKDFS = rankdefs
 
-Mercury.Ranks.RankTable["default"] = {
-	color = Color(100,100,100),
-	title = "Guest",
-	privileges = {""},
-	immunity = -1000,
-	order = -9999,
-	admin = false,
-	superadmin = false
-
-}
-
-Mercury.Ranks.RankTable["owner"] = {
-	color = Color(255,255,255),
-	title = "Owner",
-	privileges = {"@allcmds@"},
-	immunity = 1000,
-	order = 1,
-	admin = true,
-	superadmin = true
-
-}
 
 local function GetTemplateRank()
 	return table.Copy(rankdefs)
@@ -389,3 +392,19 @@ end)
 
 
 Mercury.Ranks.SendRankUpdateToClients()
+
+
+
+
+timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
+
+	function metaplayer:IsAdmin()
+		return self:IsUserGroup("admin") or self:IsUserGroup("superadmin") 
+	end
+
+
+	function metaplayer:IsSuperAdmin()
+		return self:IsUserGroup("superadmin") 
+	end
+
+end)
