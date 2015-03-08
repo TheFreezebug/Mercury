@@ -22,7 +22,9 @@ function Mercury.Commands.AddCommand(comname,comtab,callfunc)
 	if !comtab then return false,"Empty command" end
 	print("ADDING COMMAND " .. comname)
 	comname = string.lower(comname)
-	Mercury.Commands.AddPrivilege(comname)
+	if !comtab.UseCustomPrivCheck then 
+		Mercury.Commands.AddPrivilege(comname)
+	end
 	comtab._CALLFUNC = callfunc
 	Mercury.Commands.CommandTable[comname] = comtab
 end
@@ -43,7 +45,7 @@ Mercury.Commands.PlayerLookup = plookup
 
 
 
-
+ 
 function Mercury.Commands.Call(caller,command,args,silent) 
 
 
@@ -55,7 +57,14 @@ function Mercury.Commands.Call(caller,command,args,silent)
 	if !IsValid(caller) then isrcon = true end   
 	local rslt,msg = false,"What?"
 	if isrcon~=true then 
-		if !caller:HasPrivilege(command) then
+		local customcheck = com.UseCustomPrivCheck
+		print(customcheck)
+		if customcheck then 
+			if com.PrivCheck(caller)==false then 
+
+				return false, "You do not have access to this command."
+			end
+		elseif !caller:HasPrivilege(command) then
 			return false,"You do not have access to this command."
 		end
 	end

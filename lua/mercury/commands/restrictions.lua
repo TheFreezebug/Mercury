@@ -1,6 +1,13 @@
 Mercury.Commands.AddPrivilege("viewrestrictions")	
 Mercury.Commands.AddPrivilege("nolimits")
- 
+Mercury.Commands.AddPrivilege("managerestrictions") 
+
+
+function RestrictPrivilegeCheck(caller)
+	return caller:HasPrivilege("managerestrictions")
+end
+
+
 ///// SWEP RESTRICTIONS /////
 MCMD = {}
 MCMD.Command = "restrictswep"
@@ -10,6 +17,10 @@ MCMD.Useage = "<swep class> <restrict add / remove> <rank name>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RestrictPrivilegeCheck
+
+
 
 function callfunc(caller,args)
 	if not (args[1] and type(args[3])=="string") then return false,"No rank name specified." end
@@ -26,7 +37,7 @@ function callfunc(caller,args)
 		if !rsl then 
 			return rsl,err
 		end
-		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the swep ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," from ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the swep ", Mercury.Config.Colors.Arg , class ,Mercury.Config.Colors.Default," from ", Mercury.Config.Colors.Rank, rank }
 
 	end
 
@@ -37,7 +48,7 @@ function callfunc(caller,args)
 			return rsl,err
 		end
 		
-		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the swep ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," to ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the swep ", Mercury.Config.Colors.Arg , class ,Mercury.Config.Colors.Default," to ", Mercury.Config.Colors.Rank, rank }
 
 	end
 
@@ -64,6 +75,8 @@ MCMD.Useage = "<sent class> <restrict add / remove> <rank name>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RestrictPrivilegeCheck
 
 function callfunc(caller,args)
 	if not (args[1] and type(args[3])=="string") then return false,"No rank name specified." end
@@ -80,7 +93,7 @@ function callfunc(caller,args)
 		if !rsl then 
 			return rsl,err
 		end
-		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the entity ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," from ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the entity ", Mercury.Config.Colors.Arg , class ,Mercury.Config.Colors.Default," from ", Mercury.Config.Colors.Rank, rank }
 
 	end
 
@@ -91,7 +104,7 @@ function callfunc(caller,args)
 			return rsl,err
 		end
 		
-		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the entity ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," to ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the entity ", Mercury.Config.Colors.Arg , class ,Mercury.Config.Colors.Default," to ", Mercury.Config.Colors.Rank, rank }
 
 	end
 
@@ -119,6 +132,9 @@ MCMD.Useage = "<sent class> <restrict add / remove> <rank name>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RestrictPrivilegeCheck
+
 
 function callfunc(caller,args)
 	if not (args[1] and type(args[3])=="string") then return false,"No rank name specified." end
@@ -135,7 +151,7 @@ function callfunc(caller,args)
 		if !rsl then 
 			return rsl,err
 		end
-		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the tool ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," from ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has restricted the tool ", Mercury.Config.Colors.Arg , class ,Mercury.Config.Colors.Default," from ", Mercury.Config.Colors.Rank, rank }
 
 	end
 
@@ -146,7 +162,7 @@ function callfunc(caller,args)
 			return rsl,err
 		end
 		
-		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the tool ", Color(255,255,255) , class ,Mercury.Config.Colors.Default," to ", Color(255,255,255) ,rank }
+		return true,"heh",true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has allowed the tool ", Mercury.Config.Colors.Arg , class ,Mercury.Config.Colors.Default," to ", Mercury.Config.Colors.Rank, rank }
 
 	end
 

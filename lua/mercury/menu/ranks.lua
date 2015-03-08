@@ -151,20 +151,26 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 
 
 			local allcmds = Mercury.Commands.GetPrivileges()
+			local allcmds2 = Mercury.Commands.GetPrivileges()
 	
-	
-			for k,v in pairs(rtab.privileges) do
+			for k,v in SortedPairs(rtab.privileges) do
 				if #v > 1 then
-					local gx = currentcommands:AddLine(v)
-					gx.privilege = v
+					local add = false 
+					for i,pri in SortedPairs(allcmds2) do 
+						if pri==v then add = true end // get rid of garbage commands	
+					end	
+					if add then 
+						local gx = currentcommands:AddLine(v)
+						gx.privilege = v
+					end
 				end
-				for i,comm in pairs(allcmds) do
+				for i,comm in SortedPairs(allcmds) do
 					if comm==v then 
 						table.remove(allcmds,i)
 					end
 				end
 			end
-			for k,v in pairs(allcmds) do
+			for k,v in SortedPairs(allcmds) do
 				local gx = nocommands:AddLine(v)
 				gx.privilege = v
 				

@@ -1,3 +1,9 @@
+Mercury.Commands.AddPrivilege("manageranks")
+function RankPrivilegeCheck(caller)
+	return caller:HasPrivilege("manageranks")
+end
+
+
 ///////////////CREATE RANK///////////////
 
 MCMD = {}
@@ -8,6 +14,8 @@ MCMD.Useage = "<rank index> <rank title> <color>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
 
 
 
@@ -54,6 +62,9 @@ MCMD.Useage = "<rank index>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
 
 function callfunc(caller,args)
 	if not (args[1] and type(args[1])=="string") then return false,"No rank name specified." end
@@ -80,6 +91,9 @@ MCMD.Useage = "<rank index> <add / remove> <privilege>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
 
 function callfunc(caller,args)
 	if not (args[1] and type(args[1])=="string") then return false,"No rank name specified." end
@@ -169,6 +183,10 @@ MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
 
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
+
 
 
 function callfunc(caller,args)
@@ -210,6 +228,9 @@ MCMD.Useage = "<rank index> <rank title>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
 
 
 
@@ -241,6 +262,9 @@ MCMD.Useage = "<rank index> <admin / superadmin> <true/false>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
 
 
 
@@ -317,6 +341,9 @@ MCMD.Useage = "<rank index> <rank title>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
 
 
 
@@ -380,6 +407,9 @@ MCMD.Useage = "<index> <new index>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
 
 function callfunc(caller,args)
 	if !args[1] then return false,"No rank specified." end
@@ -411,6 +441,9 @@ MCMD.Useage = "<index> <new index>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
 
 function callfunc(caller,args)
 	if !args[1] then return false,"No rank specified." end
@@ -444,6 +477,9 @@ MCMD.Useage = "<rank index> <number immunity>"
 MCMD.UseImmunity = false
 MCMD.PlayerTarget = false
 MCMD.HasMenu = false
+MCMD.UseCustomPrivCheck = true 
+MCMD.PrivCheck = RankPrivilegeCheck
+
 
 
 

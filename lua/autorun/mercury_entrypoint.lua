@@ -8,7 +8,7 @@ Mercury.Config = {
 
 } 
  
-
+ 
  CreateConVar( "mercury_version", Mercury.Version , FCVAR_REPLICATED , "Current version of mercury.") 
 
  

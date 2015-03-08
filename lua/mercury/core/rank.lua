@@ -270,10 +270,11 @@ function Mercury.Ranks.SetRank(play,rank)
 
 	play._RANK = rank
 	Mercury.Ranks.SendRankUpdateToClients()
-
+	/*
 	if gax.superadmin then play:SetNWString("UserGroup", "superadmin")
 	elseif gax.admin then play:SetNWString("UserGroup", "admin")
 	else play:SetNWString("UserGroup", "guest") end
+	*/
 
 	return true
 end
@@ -359,6 +360,7 @@ end)
 timer.Create("Mercury_UpdatePlayerInfo",0.5,0,function()
 	for k,v in pairs(player.GetAll()) do 
 		v:SetNWString("UserRank",v:GetRank())
+		/*
 		pcall(function()
 			local rnk = v:GetRank()
 		
@@ -375,6 +377,7 @@ timer.Create("Mercury_UpdatePlayerInfo",0.5,0,function()
 			end
 
 		end)
+		*/
 		pcall( function()
 			if Mercury.Config["UseTeams"] == true then 
 					v:SetTeam(Mercury.Ranks.RankTable[v:GetRank()].order  - Mercury.Config["TeamOffset"] )
@@ -397,14 +400,47 @@ Mercury.Ranks.SendRankUpdateToClients()
 
 
 timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
-
-	function metaplayer:IsAdmin()
-		return self:IsUserGroup("admin") or self:IsUserGroup("superadmin") 
+	function metaplayer:GetUserGroup()
+		return self:GetRank()
 	end
 
+	function metaplayer:IsUserGroup(grp)
+		local grp2 = string.lower(grp)
+		if self:GetRank()==grp2 then return true end
 
+		return false
+	end
+
+	function metaplayer:IsAdmin()
+		local admin = false 
+		pcall(function()
+			if Mercury.Ranks.RankTable[self:GetRank()].admin==true or Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
+				admin = true
+			end
+
+		end)
+
+
+
+		return admin
+	end
 	function metaplayer:IsSuperAdmin()
-		return self:IsUserGroup("superadmin") 
+		
+
+			local admin = false 
+			pcall(function()
+				if  Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
+					admin = true
+				end
+
+			end)
+
+
+
+		return admin
+
+
+
 	end
 
 end)

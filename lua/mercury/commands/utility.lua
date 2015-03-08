@@ -298,3 +298,73 @@ end
 
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
 
+
+
+
+------------------------------ Respawn ------------------------------
+//force spawn a player
+MCMD = {}
+MCMD.Command = "spawn" // The actual command index.
+MCMD.Verb = "respawned" // The verb (if using)
+MCMD.RconUse = true // Can RCON use this command?
+MCMD.Useage = "<player>" // The useage for this command, the arguments.
+MCMD.UseImmunity = true // Should this abide by immunity?
+MCMD.PlayerTarget = true // Does it use a player target?
+MCMD.HasMenu = true // Does it have a callable GenerateMenu function?
+/// NOTICE /// if PlayerTarget is true, the first argument will be the selected player target.
+ 
+ 
+function callfunc(caller,args)
+	args[1]:Spawn()	
+	return true,"",false,{Color(1,1,1,255),caller,Color(47,150,255,255)," respawned ", args[1]} //RETURN CODES.
+    // First argument true / false -- Command succeeded?
+    // Second argument: String error, if first argument is false this is pushed to the client.
+    // Third argument true / false -- supress default messages
+    // Fourth argument table, the message to print to chat if second argument is true.
+ 
+end
+
+
+function MCMD.GenerateMenu(frame)
+        local selectedplayer = nil
+ 
+            local ctrl = vgui.Create( "DListView", frame)
+            ctrl:AddColumn( "Players" )
+            ctrl:SetSize( 210, 380 )    
+            ctrl:SetPos( 10, 0 )
+               
+            local SpawnButton = vgui.Create( "DButton" , frame)
+            SpawnButton:SetPos( 240, 40 )
+            SpawnButton:SetText( "Respawn" )
+            SpawnButton:SetSize( 130, 60 )
+            SpawnButton:SetDisabled(true)
+            SpawnButton.DoClick = function(self)
+                if self:GetDisabled()==true then return false end
+                surface.PlaySound("buttons/button3.wav")
+                net.Start("Mercury:Commands")
+                    net.WriteString("spawn")
+                    net.WriteTable({selectedplayer})
+                net.SendToServer()
+ 
+            end
+ 
+ 
+       
+            local players = player.GetAll()
+            local t = {}
+            for _, ply in ipairs( players ) do
+                local item = ctrl:AddLine( ply:Nick() )
+                item.ply = ply
+            end
+ 
+            function ctrl:OnRowSelected(lineid,isselected)
+                local line_obj = self:GetLine(lineid)
+                surface.PlaySound("buttons/button6.wav")
+                 SpawnButton:SetDisabled(false)
+                selectedplayer = line_obj.ply
+                return true
+            end
+end
+ 
+Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)// This is where we add the plugin.
+

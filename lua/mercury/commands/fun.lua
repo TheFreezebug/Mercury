@@ -329,3 +329,108 @@ function MCMD.GenerateMenu(frame)
 end
 
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)
+
+
+MCMD = {}
+MCMD.Command = "explode" // The actual command index.
+MCMD.Verb = "exploded" // The verb (if using)
+MCMD.RconUse = true // Can RCON use this command?
+MCMD.Useage = "<player>" // The useage for this command, the arguments.
+MCMD.UseImmunity = true // Should this abide by immunity?
+MCMD.PlayerTarget = true // Does it use a player target?
+MCMD.HasMenu = true // Does it have a callable GenerateMenu function?
+/// NOTICE /// if PlayerTarget is true, the first argument will be the selected player target.
+ 
+ 
+function callfunc(caller,args)
+	local ply = args[1]
+
+
+	local rmtab = {}
+	ply:EmitSound("items/cart_explode_falling.wav",150)
+    ply:SetPos(ply:GetPos() + Vector(0,0,10))
+    ply:SetVelocity(Vector(0,0,99999))
+    timer.Simple(0.2,function() 
+        ply:Kill()
+
+        ply:EmitSound("items/cart_explode.wav")
+
+              local explosive = ents.Create( "env_explosion" )
+                        explosive:SetPos( ply:GetPos() )
+                        explosive:SetOwner( ply )
+                        explosive:Spawn()
+                        explosive:SetKeyValue( "iMagnitude", "1" )
+                        explosive:Fire( "Explode", 0, 0 )
+
+        for I=1,6 do
+            rmtab[I] = ents.Create("prop_physics")
+            rmtab[I]:SetModel("models/Roller.mdl")
+            rmtab[I]:SetPos(ply:GetPos() + Vector(math.random(-50,50) ,math.random(-50,50) ,math.random(-50,50)))
+            rmtab[I]:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+            rmtab[I]:Spawn()
+            local trail = util.SpriteTrail(rmtab[I], 0, Color(math.random(1,255) ,math.random(1,255) ,math.random(1,255) ), false, 15, 1, 10, 3, "trails/plasma.vmt")
+            rmtab[I]:GetPhysicsObject():SetVelocityInstantaneous(Vector(math.random(-1000,1000) ,math.random(-1000,1000) ,1000))
+
+        end
+        timer.Simple(10,function()
+            for k,v in pairs(rmtab) do
+                if v and IsValid(v) then v:Remove() end
+            end
+
+        end)    
+
+    end)
+
+
+
+
+	return true,"",false,{} //RETURN CODES.
+    // First argument true / false -- Command succeeded?
+    // Second argument: String error, if first argument is false this is pushed to the client.
+    // Third argument true / false -- supress default messages
+    // Fourth argument table, the message to print to chat if second argument is true.
+ 
+end
+
+
+function MCMD.GenerateMenu(frame)
+        local selectedplayer = nil
+ 
+            local ctrl = vgui.Create( "DListView", frame)
+            ctrl:AddColumn( "Players" )
+            ctrl:SetSize( 210, 380 )    
+            ctrl:SetPos( 10, 0 )
+               
+            local SpawnButton = vgui.Create( "DButton" , frame)
+            SpawnButton:SetPos( 240, 40 )
+            SpawnButton:SetText( "Explode" )
+            SpawnButton:SetSize( 130, 60 )
+            SpawnButton:SetDisabled(true)
+            SpawnButton.DoClick = function(self)
+                if self:GetDisabled()==true then return false end
+                surface.PlaySound("buttons/button3.wav")
+                net.Start("Mercury:Commands")
+                    net.WriteString("explode")
+                    net.WriteTable({selectedplayer})
+                net.SendToServer()
+ 
+            end
+ 
+            local players = player.GetAll()
+            local t = {}
+            for _, ply in ipairs( players ) do
+                local item = ctrl:AddLine( ply:Nick() )
+                item.ply = ply
+            end
+ 
+            function ctrl:OnRowSelected(lineid,isselected)
+                local line_obj = self:GetLine(lineid)
+                surface.PlaySound("buttons/button6.wav")
+                 SpawnButton:SetDisabled(false)
+                selectedplayer = line_obj.ply
+                return true
+            end
+end
+ 
+Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)// This is where we add the plugin.
+

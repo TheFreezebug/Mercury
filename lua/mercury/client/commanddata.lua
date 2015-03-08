@@ -18,7 +18,9 @@ function Mercury.Commands.AddCommand(comname,comtab,callfunc)
 	if !comname then return false,"NO INDEX" end
 	if !comtab then return false,"Empty command" end
 	comname = string.lower(comname)
-	Mercury.Commands.AddPrivilege(comname)
+	if !comtab.UseCustomPrivCheck then 
+		Mercury.Commands.AddPrivilege(comname)
+	end
 
 	Mercury.Commands.CommandTable[comname] = comtab
 end

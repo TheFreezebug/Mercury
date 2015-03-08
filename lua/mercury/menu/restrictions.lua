@@ -77,7 +77,7 @@ local EXTEND_SENTS = {
 
 
 
-function GenerateSwepMenu(frame,ranktab,rindex)
+local function GenerateSwepMenu(frame,ranktab,rindex)
 			if !ranktab["restrictions"] then 
 				ranktab["restrictions"] = {}
 			end
@@ -203,7 +203,7 @@ end
 
 
 
-function GenerateSentsMenu(frame,ranktab,rindex)
+local function GenerateSentsMenu(frame,ranktab,rindex)
 			if !ranktab["restrictions"] then 
 				ranktab["restrictions"] = {}
 			end
@@ -329,7 +329,7 @@ end
 --		local TOOLS = weapons.GetStored("gmod_tool").Tool
 
 
-function GenerateToolsMenu(frame,ranktab,rindex)
+local function GenerateToolsMenu(frame,ranktab,rindex)
 			if !ranktab["restrictions"] then 
 				ranktab["restrictions"] = {}
 			end

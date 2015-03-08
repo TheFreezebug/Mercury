@@ -34,8 +34,9 @@ local args =  net.ReadTable()
 			local title = rtab.title
 			local order = rtab.order
 			local color = rtab.color 
-
-			team.SetUp(order - Mercury.Config["TeamOffset"]  , title, color, false ) 
+			if Mercury.Config["UseTeams"]==true then 
+				team.SetUp(order - Mercury.Config["TeamOffset"]  , title, color, false ) 
+			end
 
 		end
 	end
@@ -53,6 +54,19 @@ function metaplayer:GetUserRank()
 	return xad
 end
 
+
+
+function metaplayer:GetRank()
+	local xad = self:GetNWString("UserRank")
+	if xad == "" or xad==nil then 
+		return "default"
+	end
+	return xad
+end
+
+
+
+
 function metaplayer:GetRankTable()
 	return Mercury.Ranks.RankTable[self:GetUserRank()]
 end
@@ -69,18 +83,7 @@ function metaplayer:HasPrivilege(x)
 		end
 		return false 
 end
-/*
-timer.Create("MARS_OverrideAdmin",1,1,function() -- This is just in case you have something weird tampering with these functions. THEY ARE MINE.
-	function metaplayer:IsAdmin()
-			if !Mercury.Ranks.RankTable[self:GetUserRank()] then return false end
-		return Mercury.Ranks.RankTable[self:GetUserRank()].admin or Mercury.Ranks.RankTable[self:GetUserRank()].superadmin
-	end
-	function metaplayer:IsSuperAdmin()
-			if !Mercury.Ranks.RankTable[self:GetUserRank()] then return false end
-		return Mercury.Ranks.RankTable[self:GetUserRank()].superadmin
-	end
-end)
-*/
+
 hook.Add("HUDPaint","MInitialRankUpdate",function()
 	net.Start("Mercury:RankData")
 		net.WriteString("GET_RANKS")
@@ -95,14 +98,47 @@ end)
 
 
 timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
-
-	function metaplayer:IsAdmin()
-		return self:IsUserGroup("admin") or self:IsUserGroup("superadmin") 
+	function metaplayer:GetUserGroup()
+		return self:GetRank()
 	end
 
+	function metaplayer:IsUserGroup(grp)
+		local grp2 = string.lower(grp)
+		if self:GetRank()==grp2 then return true end
 
+		return false
+	end
+
+	function metaplayer:IsAdmin()
+		local admin = false 
+		pcall(function()
+			if Mercury.Ranks.RankTable[self:GetRank()].admin==true or Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
+				admin = true
+			end
+
+		end)
+
+
+
+		return admin
+	end
 	function metaplayer:IsSuperAdmin()
-		return self:IsUserGroup("superadmin") 
+		
+
+			local admin = false 
+			pcall(function()
+				if  Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
+					admin = true
+				end
+
+			end)
+
+
+
+		return admin
+
+
+
 	end
 
 end)
