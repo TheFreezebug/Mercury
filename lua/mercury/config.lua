@@ -55,7 +55,6 @@ if CLIENT then
 			
 			Mercury.Config = CARGS
 		end
-		print("HE")
 
 	end)
 
