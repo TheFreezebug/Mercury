@@ -4,7 +4,7 @@ hook.Add("PlayerCanHearPlayersVoice","mercurygag",function(XAD,P)
 
 		return false,false
 	end
-	return true,false
+	
 end)
 
 
