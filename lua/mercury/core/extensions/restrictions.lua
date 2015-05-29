@@ -57,7 +57,7 @@ local function LoadRestrictions()
 			if !Restrictions or !Restrictions.Tools then return end
 			
 			if Restrictions.Tools[toolmode] then
-				Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to use this tool!"})
+				Mercury.Util.SendMessage(play, {Mercury.Config.Colors.Error,"You're not allowed to use this tool!"})
 				return false
 			end
 		end )
@@ -135,7 +135,7 @@ local function LoadRestrictions()
 		if !Restrictions or !Restrictions.Sents then return end
 		
 		if Restrictions.Sents[class] then
-			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this!"})
+			Mercury.Util.SendMessage(play, {Mercury.Config.Colors.Error,"You're not allowed to spawn this!"})
 			return false
 		end
 	end )
@@ -186,7 +186,7 @@ local function LoadRestrictions()
 		
 		if Restrictions.Weaps[Weapon] and !play._ALLOWEAPON then
 		
-			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this weapon!"})
+			Mercury.Util.SendMessage(play, {Mercury.Config.Colors.Error,"You're not allowed to spawn this weapon!"})
 			return false
 		end
 	end )
@@ -197,7 +197,7 @@ local function LoadRestrictions()
 		if !Restrictions or !Restrictions.Weaps then return end
 	
 		if Restrictions.Weaps[Weapon] then
-			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this weapon!"})
+			Mercury.Util.SendMessage(play, {Mercury.Config.Colors.Error,"You're not allowed to spawn this weapon!"})
 			return false
 		end
 	end )
