@@ -216,7 +216,12 @@ local function LoadRestrictions()
 end
 
 
+<<<<<<< HEAD
 hook.Add("Initialize", "Mercury:Restrictions",function()
   	LoadRestrictions()
 end)
 pcall(LoadRestrictions)
+=======
+hook.Add("Initialize", "Mercury:Restrictions",LoadRestrictions)
+pcall(LoadRestrictions)
+>>>>>>> origin/master
