@@ -1,31 +1,6 @@
-MCMD = {}
-MCMD.Command = "menu"
-MCMD.Verb = ""
-MCMD.RconUse = false
-MCMD.Useage = ""
-MCMD.UseImmunity = false
-MCMD.PlayerTarget = false
-MCMD.HasMenu = false
-
-
-
+local MCMD = Mercury.Commands.CreateTable("menu", "", false, "", false, false, false, nil)
 function callfunc(caller,args)
 	caller:SendLua("Mercury.Menu.Open()")
-	return true,"heh",true,{} //RETURN CODES.
-
+	return true, "heh", true, {}
 end
-
-
-function MCMD.GenerateMenu(GFRAME)
-
-
-
-
-
-
-
-
-
-end
-
 Mercury.Commands.AddCommand(MCMD.Command,MCMD,callfunc)

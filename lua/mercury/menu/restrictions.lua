@@ -493,7 +493,31 @@ function GenerateTabs(frame,rdata)
 end
 
  function GenerateMenu(CONTAINER)
+ 	if !GAMEMODE.IsSandboxDerived then 
 
+
+ 		local DLabel = vgui.Create( "DLabel", CONTAINER )
+		DLabel:SetPos( 10, 10 )
+		DLabel:SetFont("DermaLarge")
+		DLabel:SizeToContents()
+		
+
+					local Error = vgui.Create( "DLabel", CONTAINER )
+					Error:SetPos( 25, 50 )
+					Error:SetText( "This gamemode is not derived from sandbox \n\nRestrictions are unavalible." )
+					Error:SizeToContents()
+					Error:SetTextColor(Color(1,1,1))
+
+
+						DLabel:SetText( "Non-Sandbox gamemode" )
+						DLabel:SizeToContents()
+						function DLabel:Paint()
+							self:SetTextColor(Color(math.abs(math.sin(CurTime()*2) * 255) ,0,0))
+						end
+
+
+ 		return 
+ 	end
 
 
 

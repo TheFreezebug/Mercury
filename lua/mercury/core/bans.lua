@@ -23,11 +23,11 @@ local function USAFESID(steam)
 end
 
 function Mercury.Bans.GetTime()
-	return      (   tonumber(os.date("%H")   )*60      + tonumber(os.date("%M")) + (tonumber(os.date("%j")) *(24*60) )          )
+	return os.time()
 end
 
 function Mercury.Bans.GetTimeStruct(minuites)
-	return (Mercury.Bans.GetTime() + minuites)
+	return (Mercury.Bans.GetTime() + (minuites * 60))
 end
 
 function Mercury.Bans.GetBanDuration(bantime) -- RETURNS BAN LENGTH IN MINUITES.
@@ -123,12 +123,12 @@ function Mercury.Bans.ConnectionCheck(steamID,ipAdress, svPassword, clPassword, 
 			-- banmsg = "Your ban expires in: " .. Mercury.Bans.GetBanDuration(time) .. "(" .. reason.. ")"
 			banmsg = 
 			[[Greetings %s, we're sorry to inform you that you are banned. 
-			You will be unbanned in: %d minuites 
+			You will be unbanned: %d
 
 			Reasoning: %s 
 
 			Inflicting Administrator: %s ]]
-			banmsg = string.format(banmsg,name,Mercury.Bans.GetBanDuration(time),reason,banner)
+			banmsg = string.format(banmsg,name,os.date("%x", Mercury.Bans.GetBanDuration(time) ),reason,banner)
 
 		else
 				banmsg = 
@@ -150,8 +150,9 @@ function Mercury.Bans.ConnectionCheck(steamID,ipAdress, svPassword, clPassword, 
 	return banned,banmsg
 end
 hook.Add("CheckPassword","MARS_CheckBanned",Mercury.Bans.ConnectionCheck)
-
-
+ 
+print(Mercury.Bans.IsBanned("STEAM_0:0:23834344")) 
+  
 net.Receive("Mercury:BanData",function(len,p)
 	local args = net.ReadString()
 	if args == "GET_DATA" then 

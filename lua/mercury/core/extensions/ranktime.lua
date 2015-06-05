@@ -71,4 +71,4 @@ timer.Create("RankTick",1,0,function()
     end)
 end)
 
-hook.Add("PlayerInitialSpawn","fagfuck",function(x) RankTime.PIS(x) end)
+hook.Add("PlayerInitialSpawn","Mercury:RankTime",function(x) RankTime.PIS(x) end)

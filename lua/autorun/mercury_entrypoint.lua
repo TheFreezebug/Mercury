@@ -7,13 +7,13 @@ Mercury.Config = {
 	UseRankTime = true
 
 } 
- 
- 
+  
+       
  CreateConVar( "mercury_version", Mercury.Version , FCVAR_REPLICATED , "Current version of mercury.") 
 
  
 if SERVER then AddCSLuaFile("mercury/config.lua") end
-include("mercury/config.lua")
+include("mercury/config.lua") 
 
 print("Initialzing Mercury.")
 local function mtag(...)
@@ -80,3 +80,4 @@ end
 
 
 Mercury.Booted = true // This seems really stupid, I know. This is for later, it helps with live-updates.
+ 

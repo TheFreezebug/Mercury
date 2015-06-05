@@ -14,6 +14,34 @@ function Mercury.Commands.GetPrivileges()
 	return table.Copy(GlobalPrivileges)
 end
 
+-- Function used to create command table
+function Mercury.Commands.CreateTable(command, verb, hasrcon, usage, hasimmunity, hasplayertarget, hasmenu, category, hascustomprivledge, privledgecheckfunction)
+   	if not command then error("No command name was given to function") return end
+   	if not verb then verb = "" end
+   	if not hasrcon then hasrcon = false end
+   	if not usage then usage = "" end
+   	if not hasimmunity then hasimmunity = true end
+   	if not hasplayertarget then hasplayertarget = false end
+   	if not hasmenu then hasmenu = false end
+   	if not category then category = "Uncategorized" end
+   	if not hascustomprivledge then hascustomprivledge = false end
+   	if not privledgecheckfunction then privledgecheckfunction = nil end
+   	
+    local tab = {}
+    tab.Command = command
+    tab.Verb = verb
+    tab.RconUse = hasrcon
+    tab.Useage = usage
+    tab.UseImmunity = hasimmunity
+    tab.PlayerTarget = hasplayertarget
+    tab.HasMenu = hasmenu
+    tab.Category = category
+    tab.UseCustomPrivCheck = hascustomprivledge
+	tab.PrivCheck = privledgecheckfunction
+
+    return tab
+end
+
 function Mercury.Commands.AddCommand(comname,comtab,callfunc)
 	if !comname then return false,"NO INDEX" end
 	if !comtab then return false,"Empty command" end

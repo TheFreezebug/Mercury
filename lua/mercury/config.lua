@@ -16,6 +16,7 @@ Mercury.Config = {
 			Setting = Color(255,100,255),
 
 		},
+	VotemapBlacklist = {},
 }
  
 

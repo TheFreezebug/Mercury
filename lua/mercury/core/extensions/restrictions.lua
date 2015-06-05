@@ -4,12 +4,14 @@ Mercury.Restrictions = { }  // Made by Rusketh
 
 
 Mercury.Ranks.AddRankProperty( "restrictions", "table", { Tools = {},  Weaps = {}, Sents = {}} )
-  
+
 local function LoadRestrictions()
 
+	if not GAMEMODE.IsSandboxDerived then return end
 /* --- --------------------------------------------------------------------------------
 	@: No Limits
    --- */
+   print("LOADED THE LOAD.")
 
 	local META = FindMetaTable("Player")
 	local GetCount = META.GetCount
@@ -57,7 +59,7 @@ local function LoadRestrictions()
 			if !Restrictions or !Restrictions.Tools then return end
 			
 			if Restrictions.Tools[toolmode] then
-				Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to use this tool!"})
+				Mercury.Util.SendMessage(play, {Mercury.Config.Colors.Error,"You're not allowed to use this tool!"})
 				return false
 			end
 		end )
@@ -135,7 +137,7 @@ local function LoadRestrictions()
 		if !Restrictions or !Restrictions.Sents then return end
 		
 		if Restrictions.Sents[class] then
-			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this!"})
+			Mercury.Util.SendMessage(play, {Mercury.Config.Colors.Error,"You're not allowed to spawn this!"})
 			return false
 		end
 	end )
@@ -186,7 +188,7 @@ local function LoadRestrictions()
 		
 		if Restrictions.Weaps[Weapon] and !play._ALLOWEAPON then
 		
-			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this weapon!"})
+			Mercury.Util.SendMessage(play, {Mercury.Config.Colors.Error,"You're not allowed to spawn this weapon!"})
 			return false
 		end
 	end )
@@ -197,7 +199,7 @@ local function LoadRestrictions()
 		if !Restrictions or !Restrictions.Weaps then return end
 	
 		if Restrictions.Weaps[Weapon] then
-			Mercury.Util.SendMessage(play, {Color(47,150,255,255),"You're not allowed to spawn this weapon!"})
+			Mercury.Util.SendMessage(play, {Mercury.Config.Colors.Error,"You're not allowed to spawn this weapon!"})
 			return false
 		end
 	end )
@@ -214,5 +216,7 @@ local function LoadRestrictions()
 end
 
 
-hook.Add("Initialize", "Mercury:Restrictions",LoadRestrictions)
+hook.Add("Initialize", "Mercury:Restrictions",function()
+  	LoadRestrictions()
+end)
 pcall(LoadRestrictions)

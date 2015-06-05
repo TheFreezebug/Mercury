@@ -34,7 +34,8 @@ local rankproperties = { // This tells the rank system what properties initially
 	immunity = "number",
 	order = "number",
 	admin = "boolean",
-	superadmin = "boolean" 
+	superadmin = "boolean" ,
+	only_target_self = "boolean"
 }
 
 local rankdefs = {
@@ -44,7 +45,8 @@ local rankdefs = {
 	immunity = -1000,
 	order = -9999,
 	admin = false,
-	superadmin = false
+	superadmin = false,
+	only_target_self = false,
 
 	}
 RNKDFS = rankdefs
@@ -244,8 +246,8 @@ end
 
 
 function Mercury.Ranks.GetProperty(index,property)
-	if !index then return false,"NO INDEX SPECIFIED" end
-	if !property then return false,"NO PROPERTY SPECIFIED" end
+	if !index then return false,"No index specified." end
+	if !property then return false,"No property specified." end
 	index = string.lower(index)
 	property = string.lower(property)
 	local gax = Mercury.Ranks.RankTable[index]
@@ -260,13 +262,31 @@ function Mercury.Ranks.GetProperty(index,property)
 	return nil
 
 end 
+/*
+function Mercury.Ranks.HasFlag(rnk,flag)
+
+	if !rnk then return nil,"No rank specified." end
+	if !flag then return nil,"No Flag specified." end
+
+	local gax = Mercury.Ranks.RankTable[rnk]
+	if !gax then return nil,"RANK DID NOT EXIST" end
+
+	local r,d = Mercury.Ranks.GetProperty(rnk,"flags") 
+
+	for k,v in pairs(r) do
+		if string.lower(flag) == v then return true end 
+	end
+
+
+end
+*/
 
 function Mercury.Ranks.SetRank(play,rank)
 	if !play then return false,"No player specified." end
 	if !rank then return false,"No rank specified." end
 	rank = string.lower(rank)
 	local gax = Mercury.Ranks.RankTable[rank]
-	if !gax then return false,"RANK DID NOT EXIST" end
+	if !gax then return false,"Rank did not exist" end
 
 	play._RANK = rank
 	Mercury.Ranks.SendRankUpdateToClients()
@@ -278,7 +298,7 @@ function Mercury.Ranks.SetRank(play,rank)
 
 	return true
 end
-
+ 
 function META:GetRank()
 	if !self._RANK then return "default" end
 	return self._RANK
@@ -301,6 +321,12 @@ function META:GetImmunity()
 end
 
 function META:CanUserTarget(x)
+	if self==x then return true end
+	local rd = self:GetRank()
+			r,d = Mercury.Ranks.GetProperty(rd,"only_target_self")
+			if r==true then 
+					return false 
+			end
 	if !x then return false end
 	return self:GetImmunity() >= x:GetImmunity()
 end
@@ -324,7 +350,22 @@ for k,v in pairs(rnks) do
 	end)
 	Mercury.Ranks.RankTable[index] = rtab
 end
+function Mercury.Ranks.RefreshTeams()
+	for k,rtab in pairs(Mercury.Ranks.RankTable) do
+				pcall(function()
+					if Mercury.Config["UseTeams"] == true then 
+						local title = rtab.title
+						local order = rtab.order
+						local color = rtab.color 
 
+						team.SetUp( order - Mercury.Config["TeamOffset"]  , title, color, false ) 
+
+					end
+
+				end)
+
+	end
+end
 function Mercury.Ranks.UpdateUserGroups(rank)
 	local gax = Mercury.Ranks.RankTable[rank]
 	if !gax then return end

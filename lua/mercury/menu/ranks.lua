@@ -136,6 +136,24 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 
 		end
 
+
+		local ranksettargetself = vgui.Create("DCheckBox",frame)
+		ranksettargetself:SetPos(180,50)		
+		local ranksettargetselfLabel = vgui.Create( "DLabel", frame )
+		ranksettargetselfLabel:SetPos( 200, 50 )
+		ranksettargetselfLabel:SetText( "Only target self?" )
+		ranksettargetselfLabel:SetTextColor(Color(1,1,1,255))
+		ranksettargetselfLabel:SizeToContents()
+		ranksettargetself:SetChecked(rtab.only_target_self)
+
+		function ranksettargetself:OnChange(val)
+			net.Start("Mercury:Commands")
+				net.WriteString("ranksettargetself")
+				net.WriteTable({rindex,tostring(val)})
+			net.SendToServer()
+
+		end
+
 			local selected_index 
 
 			local nocommands = vgui.Create( "DListView", frame)
@@ -398,7 +416,7 @@ end
 				v._INDEX = k
 				sortab[v.order] = v 
 			end
-			for k,v in pairs(sortab) do
+			for k,v in SortedPairs(sortab) do
 				k = v._INDEX
 		 		local line = ctrl:AddLine(k,v.title)
 		 		local menutab = table.Copy(v)

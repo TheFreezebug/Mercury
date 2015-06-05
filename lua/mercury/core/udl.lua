@@ -84,7 +84,11 @@ function UDL.PIS(P)
 end
 
 function UDL.SetSaveRank(P,rank)
-	Mercury.Ranks.SetRank(P,rank)
+	local a,d,c = Mercury.Ranks.SetRank(P,rank)
+	if !a then 
+		return a,d,c
+	end
+	
 	local x = P:GetRank()
 	UDL.SaveData(P,{rank = x})
 	return true
