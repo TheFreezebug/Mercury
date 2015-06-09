@@ -123,12 +123,12 @@ function Mercury.Bans.ConnectionCheck(steamID,ipAdress, svPassword, clPassword, 
 			-- banmsg = "Your ban expires in: " .. Mercury.Bans.GetBanDuration(time) .. "(" .. reason.. ")"
 			banmsg = 
 			[[Greetings %s, we're sorry to inform you that you are banned. 
-			You will be unbanned: %d
+			You will be unbanned: %s
 
 			Reasoning: %s 
 
 			Inflicting Administrator: %s ]]
-			banmsg = string.format(banmsg,name,os.date("%x", Mercury.Bans.GetBanDuration(time) ),reason,banner)
+			banmsg = string.format(banmsg,name,os.date("%x @ %X", Mercury.Bans.GetBanDuration(time) + os.time()  ),reason,banner)
 
 		else
 				banmsg = 
