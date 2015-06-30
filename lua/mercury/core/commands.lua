@@ -20,16 +20,16 @@ end
 
 -- Function used to create command table
 function Mercury.Commands.CreateTable(command, verb, hasrcon, usage, hasimmunity, hasplayertarget, hasmenu, category, hascustomprivledge, privledgecheckfunction)
-   	if not command then error("No command name was given to function") return end
-   	if not verb then verb = "" end
-   	if not hasrcon then hasrcon = false end
-   	if not usage then usage = "" end
-   	if not hasimmunity then hasimmunity = true end
-   	if not hasplayertarget then hasplayertarget = false end
-   	if not hasmenu then hasmenu = false end
-   	if not category then category = "Uncategorized" end
-   	if not hascustomprivledge then hascustomprivledge = false end
-   	if not privledgecheckfunction then privledgecheckfunction = nil end
+   	if command==nil then error("No command name was given to function") return end
+   	if verb==nil then verb = "" end
+   	if hasrcon==nil then hasrcon = false end
+   	if usage==nil then usage = "" end
+   	if hasimmunity==nil then hasimmunity = true end
+   	if hasplayertarget==nil then hasplayertarget = false end
+   	if hasmenu==nil then hasmenu = false end
+   	if category==nil then category = "Uncategorized" end
+   	if hascustomprivledge==nil then hascustomprivledge = false end
+   
    	
     local tab = {}
     tab.Command = command
