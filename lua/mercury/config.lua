@@ -16,6 +16,8 @@ Mercury.Config = {
 			Setting = Color(255,100,255),
 
 		},
+
+	EnabledPackages = {},
 }
  
 
@@ -29,7 +31,6 @@ if SERVER then
 		local jdata = util.JSONToTable(tab)
 		for k,v in pairs(jdata) do
 				Mercury.Config[k] = v
-
 		end
 	end
 end

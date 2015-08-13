@@ -4,7 +4,7 @@ function callfunc(caller,args)
 	caller:SetPos(args[1]:GetPos() + Vector(0,0,80) )
 	return true, "heh", false, {}
 end
-
+ 
 function MCMD.GenerateMenu(frame)
 	local selectedplayer = nil 
 

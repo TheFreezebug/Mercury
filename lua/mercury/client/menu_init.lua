@@ -92,3 +92,65 @@ function Mercury.Menu.ShowErrorCritical(err)
 	tbox:SetPos(15,96)
 	tbox:SetHTML([[<pre>  <font color="white">]] .. err .. "<font></pre>")
 end
+
+
+
+
+local progressactive = false
+local progress = 0 
+local maxprogress = 500
+local progresstext = "???"
+function Mercury.Menu.ShowProgress(message)
+	progresstext = message
+	progressactive = true 
+end
+
+hook.Add("PostRenderVGUI","MercuryProgress",function()
+	if progressactive then
+		surface.SetDrawColor(Color(1,1,1))
+		surface.DrawRect( (ScrW() / 2 ) - ((ScrW() / 4) / 2), (ScrH() / 2 ) - ((ScrH() / 5) / 2), (ScrW() / 4),(ScrH() / 5))
+		surface.SetDrawColor(Color(200,200,200))
+		surface.DrawRect( (ScrW() / 2 ) - ((ScrW() / 4) / 2), (ScrH() / 2 ) - ((ScrH() / 5) / 2), (ScrW() / 4),(ScrH() / 5))
+
+		local pulse = math.sin(CurTime()  * 10) * 2
+		surface.SetDrawColor(Color(50,50,50))
+		surface.DrawRect( (ScrW() / 1.9) - ((ScrW() / 4) / 2) - pulse, (ScrH() / 1.95) - pulse , (ScrW() / 5) + pulse* 2 ,(ScrH() / 24) + pulse * 2)
+
+
+		surface.SetDrawColor(Color(50,255,50))
+		surface.DrawRect( (ScrW() / 1.9) - ((ScrW() / 4) / 2) - pulse , (ScrH() / 1.95) - pulse ,  ((ScrW() / 5) + pulse * 2) * math.Clamp((progress / maxprogress),0,1)  , ((ScrH() / 24))  + pulse*2 )
+
+		draw.SimpleText( progresstext, "ChatFont", ScrW() / 2, ScrH() / 2.3, Color(1,1,1,255) , TEXT_ALIGN_CENTER) 
+	end
+end)
+
+
+function Mercury.Menu.CloseProgress()
+	progressactive = false
+	progresstext = "This shouldn't be open :/"
+	progress = 0 
+	maxprogress = 1
+end
+
+function Mercury.Menu.UpdateProgress(current,max,newtitle)
+	progresss = current 
+	maxprogress = max
+	if newtitle then 
+		progresstext = newtitle 
+	end
+end
+
+net.Receive("Mercury:Progress",function()
+	local command = net.ReadString()
+	local data = net.ReadTable() 
+	if command == "START_PROGRESS" then 
+		Mercury.Menu.ShowProgress(data.messagetext)
+	end
+	if command == "UPDATE_PROGRESS" then 
+		progress = data.progress 
+		maxprogress = data.maxprogress
+	end
+	if command == "STOP_PROGRESS" then
+		Mercury.Menu.CloseProgress()
+	end
+end)

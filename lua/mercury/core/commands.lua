@@ -111,7 +111,7 @@ function Mercury.Commands.Call(caller,command,args,silent)
 	//* Checking for privileges
 	if not RconIsCalling then // * Rcon is god
 			if not CommandTable.UseCustomPrivCheck then 
-				if not v:HasPrivilege(command) then 
+				if not caller:HasPrivilege(command) then 
 					return false,{"You do not have access to this command."}
 				end 
 			else //* Command has a custom privilege check.
@@ -147,34 +147,45 @@ function Mercury.Commands.Call(caller,command,args,silent)
 					return false,{"The command you specified doesn't allow symbolic / wildcard targeting."}
 				end
 			else 
+				PrintTable(args)
 				local tgs = plookup(args[1])
 				if #tgs == 0 then 
 					return false,{"No target was found."}
 				end 
 
-				if tgs > 0 then 
-					if tgs > 1 and not CommandTable.AllowWildcard then 
+				if #tgs > 0 then 
+					if #tgs > 1 and not CommandTable.AllowWildcard then 
 						local playernamesor = {} 
 						for I=1,#tgs do 
 							if I~=#tgs then 
 								playernamesor[#playernamesor + 1] = tgs[I]
-								playernamesor[#playernamesor + 1] = " or "
+								playernamesor[#playernamesor + 1] = ", "
 							else 
+								playernamesor[#playernamesor + 1] =  " or "
 								playernamesor[#playernamesor + 1] = tgs[I] 
 								playernamesor[#playernamesor + 1] = "?"
 							end
 						end
 						return false,{"Multiple targets found, did you mean ", unpack(playernamesor) }
 					end
+					for k,v in pairs(tgs)do 
+						Targets[#Targets + 1] = v 
+					end 
+				
 				end
+				
 			end
 		end
 
 		local success,error,custom,ctable
 		for k,v in pairs(Targets)do 
-			success,error,custom,ctable = CommandTable.__CALLFUNC(v,args)
+			local ar2 = args
+			ar2[1] = v
+			/////////Problem Here
+			success,error,custom,ctable = CommandTable._CALLFUNC(caller,ar2)
+			
 			if type(error) == "string" then // Legacy command support
-				if error = "@SYNTAX_ERR" then
+				if error == "@SYNTAX_ERR" then
 					error = {"Command syntax error. Syntax of this command is: ", command ,	" ",	CommandTable.Useage}
 				else 
 					error = {error}
@@ -196,10 +207,11 @@ function Mercury.Commands.Call(caller,command,args,silent)
 					end
 
 				end
-				return true,{"Command completed successfully. "}
-			end 
-		else 
-			return false,{error}
+				return true,{"Command completed successfully. "} 
+
+			else 
+				return false,{error}
+			end
 		end
 		 
 		return true,{"Command completed successfully."}
@@ -207,7 +219,43 @@ function Mercury.Commands.Call(caller,command,args,silent)
 	//////////////////////////////////////////////////////////////////////
 
 
+	////////////////NON TARGETED COMMANDS//////////////////////
 
+
+
+	local success,error,custom,ctable = CommandTable._CALLFUNC(caller,args)
+			
+			if type(error) == "string" then // Legacy command support
+				if error == "@SYNTAX_ERR" then
+					error = {"Command syntax error. Syntax of this command is: ", command ,	" ",	CommandTable.Useage}
+				else 
+					error = {error}
+				end
+			end
+			if success then 
+				if custom then 
+					if not silent then 
+						Mercury.Util.Broadcast({Mercury.Config.Colors.Server, unpack( ctable ) })
+					else 
+						Mercury.Util.SendMessage(caller, {Mercury.Config.Colors.Server, "(SILENT) ", unpack( ctable ) })
+					end 
+
+				else 
+					if not silent then 
+						Mercury.Util.Broadcast({Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default, " has " .. CommandTable.Verb .." ",v,Mercury.Config.Colors.Default, "."})				
+					else 
+						Mercury.Util.SendMessage(caller, {Mercury.Config.Colors.Server,"(SILENT) ",caller,Mercury.Config.Colors.Default, " has " .. CommandTable.Verb .." ",v,Mercury.Config.Colors.Default, "."})
+					end
+
+				end
+				return true,{"Command completed successfully. "} 
+
+			else 
+				return false,{error}
+			end
+
+
+	return false,{"Something pretty weird happened."}
 end
 
 
