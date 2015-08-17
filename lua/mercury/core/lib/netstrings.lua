@@ -6,7 +6,8 @@ local NetStrings = {
 	"Mercury:BanData",
 	"Mercury:MenuData",
 	"Mercury:Commands",
-	"Mercury:Config"
+	"Mercury:Config",
+	"Mercury:Progress"
 
 
 }

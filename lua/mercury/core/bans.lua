@@ -156,6 +156,11 @@ print(Mercury.Bans.IsBanned("STEAM_0:0:23834344"))
 net.Receive("Mercury:BanData",function(len,p)
 	local args = net.ReadString()
 	if args == "GET_DATA" then 
+			net.Start("Mercury:Progress") 
+				net.WriteString("START_PROGRESS")
+				net.WriteTable({messagetext = "Acquiring ban data."})
+			net.Send(p)
+
 		local bdata = {}
 		for k,v in pairs(file.Find("mercury/bans/*.txt","DATA")) do
 			-- Decode table
@@ -178,9 +183,17 @@ net.Receive("Mercury:BanData",function(len,p)
 			bdata[#bdata + 1] = BINF
 		end
 		net.Start("Mercury:BanData")
-		
 			net.WriteTable({data = bdata,tchunks = 0,chunkno = 0})
 		net.Send(p)
+
+
+		timer.Simple(1,function()
+			net.Start("Mercury:Progress") 
+				net.WriteString("STOP_PROGRESS")
+				net.WriteTable({messagetext = "Acquiring ban data."})
+			net.Send(p)
+			
+		end)
 	end
 
 end)

@@ -1,8 +1,21 @@
 Mercury.Commands = {}
 Mercury.Commands.CommandTable = {}
+local GlobalProperties = {
+	"Command",
+	"Verb",
+	"RconUse",
+	"Useage", 
+	
+	"UseImmunity",
+	"PlayerTarget",
+	"HasMenu",
+	"Category",
+	"UseCustomPrivCheck",
+	"PrivCheck"
+
+}
 local GlobalPrivileges = {
 	"@allcmds@"
-
 }
 
 -- Who cares?
@@ -19,6 +32,8 @@ function Mercury.Commands.GetPrivileges()
 end
 
 -- Function used to create command table
+/* NOTICE! THIS FUNCTION WILL BE DEPRECATED */
+/* DO NOT USE IT                            */
 function Mercury.Commands.CreateTable(command, verb, hasrcon, usage, hasimmunity, hasplayertarget, hasmenu, category, hascustomprivledge, privledgecheckfunction)
    	if command==nil then error("No command name was given to function") return end
    	if verb==nil then verb = "" end
@@ -51,7 +66,7 @@ function Mercury.Commands.AddCommand(comname,comtab,callfunc)
 	if !comtab then return false,"Empty command" end
 	print("ADDING COMMAND " .. comname)
 	comname = string.lower(comname)
-	if !comtab.UseCustomPrivCheck then 
+	if not comtab.UseCustomPrivCheck then 
 		Mercury.Commands.AddPrivilege(comname)
 	end
 	comtab._CALLFUNC = callfunc
@@ -60,157 +75,187 @@ end
 
 local function plookup(info)
 	if !type(info)=="string" then return nil end
+	local targets ={}
 	for k, v in pairs(player.GetAll()) do
 		if string.find(string.lower(v:Name()), string.lower(tostring(info))) ~= nil then
-			return v
+			targets[#targets + 1] = v
 		end
 		if v:SteamID()==info then
-			return v
+			targets[#targets + 1] = v
 		end
 	end
+	return targets
 end      
 Mercury.Commands.PlayerLookup = plookup
- 
+
+
+
+
+ // 					Mercury.Util.Broadcast({Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default, " has " .. com.Verb .." ",gabe,Mercury.Config.Colors.Default, "."})
 function Mercury.Commands.Call(caller,command,args,silent) 
-	if !command then return false,"No command specified." end
+	if !command then return false,"No command specified." end // Check for specified command.
+
 	command = string.lower(command)
-	local isrcon = false
-	if !Mercury.Commands.CommandTable[command] then return false,"Command does not exist." end
-	local com = Mercury.Commands.CommandTable[command] 
-	if !IsValid(caller) then isrcon = true end   
-	local rslt,msg = false,"What?"
-	if isrcon~=true then 
-		local customcheck = com.UseCustomPrivCheck
 
-		if customcheck then 
-			if com.PrivCheck(caller)==false then 
+	if !Mercury.Commands.CommandTable[command] then return false,"Command does not exist." end // Check for existance of command
 
-				return false, "You do not have access to this command."
+	local CommandTable = Mercury.Commands.CommandTable[command] 
+	local CallerIdentifier ="[SERVER]"
+	local RconIsCalling = false 
+	local Targets = {}
+
+	if not IsValid(caller) then 
+		  caller = "[SERVER]"
+	end
+
+	//* Checking for privileges
+	if not RconIsCalling then // * Rcon is god
+			if not CommandTable.UseCustomPrivCheck then 
+				if not caller:HasPrivilege(command) then 
+					return false,{"You do not have access to this command."}
+				end 
+			else //* Command has a custom privilege check.
+				if not CommandTable.PrivCheck(caller) then 
+					return false,{"You do not have access to this command."}
+				end 
 			end
-		elseif !caller:HasPrivilege(command) then
-			return false,"You do not have access to this command."
-		end
-		if IsValid(caller) then 
+	end 
 
-		end
-	end
-	local asd = tostring(caller)
-	local argstring = ""
-	for k,v in pairs(args) do
-		argstring = argstring .. tostring(args[k]) .. ", "
-	end
-	if isrcon==true then
-		asd = "[SERVER]"
-	end
+	// TARGETED COMMANDS
 
-	MsgN(tostring(asd) .. " ran " .. command .. " with args " .. argstring)
-//rcon lua_run Mercury.Commands.Call(Player(11),[[test]],[[freeze]],false)
+	if CommandTable.PlayerTarget then 
 
-	//////// FOR TARGETED COMMANDS ////////
-	if com.PlayerTarget==true then 
-		local rsl,err,supress,supresstab 
-		local target 
-		if type(args[1])=="string" then 
-			if args[1]~="^" then 
-				target = plookup(args[1])
+		if !args[1] then 
+			if CommandTable.AllowWildcard then //Check if command allows wildcard to be used 
+				Targets[#Targets + 1] = caller 
 			else 
-				target = caller
+				return false,{"No target was specified for the command."}
 			end
-
-			
-		elseif type(args[1])=="Player" then 
-			target = args[1]
-
 		end
-		if !target then return false,"Could not find target." end
-		args[1] = target // pckg args.
-		if isrcon~=true then 
-			if com.UseImmunity==true then
-				local ctarget = caller:CanUserTarget(target)
-				if !ctarget then return ctarget,"You cannot target this person." end
-			end
-		args[1] = target
-		rsl,err,supress,supresstab = com._CALLFUNC(caller,args);	
-		if rsl==false then 
-			return false,err
-		end
-		else
-			caller = "[SERVER]"
-			if com.RconUse==false then return false,"RCON Cannot use this command." end
-			rsl,err,supress,supresstab = com._CALLFUNC(caller,args);	
-
-		end 
-		if rsl==true then 
-			if silent~=true then 
-				if supress~=true then
-					Mercury.Util.Broadcast({Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default, " has " .. com.Verb .." ",target,Mercury.Config.Colors.Default, "."})
-				else
-					if #supresstab > 0 then 
-						Mercury.Util.Broadcast(supresstab)
+		
+		if args[1] then 
+			if args[1]=="^" or args[1]=="*" then 
+				if CommandTable.AllowWildcard then 
+					if args[1]=="^" then 
+						Targets[#Targets + 1] = caller 	
+					elseif args[1]=="*" then 
+						for k,v in pairs(player.GetAll()) do
+							Targets[#Targets + 1] = v
+						end
 					end
+				else
+					return false,{"The command you specified doesn't allow symbolic / wildcard targeting."}
 				end
+			else 
+				PrintTable(args)
+				local tgs = plookup(args[1])
+				if #tgs == 0 then 
+					return false,{"No target was found."}
+				end 
 
-			end
-
-		end
-		return true,"Command completed successfully."
-	end
-	//////////////////////////////
-
-
-	do
-		local rsl,err,supress,supresstab 
-		local gabe = args[1]
-		if isrcon~=true then 
-
-		rsl,err,supress,supresstab = com._CALLFUNC(caller,args);	
-
-				if rsl==false then 
-					return false,err
-				end
-		else
-
-				caller = "[SERVER]"
-				if com.RconUse==false then return false,"RCON Cannot use this command." end
-				rsl,err,supress,supresstab = com._CALLFUNC(caller,args);	
-
-				if rsl==false then 
-					return false,err
-				end
-		end
-
-
-		if rsl==true then 
-	
-	
-			if silent~=true then 
-			
-				if supress~=true then
+				if #tgs > 0 then 
+					if #tgs > 1 and not CommandTable.AllowWildcard then 
+						local playernamesor = {} 
+						for I=1,#tgs do 
+							if I~=#tgs then 
+								playernamesor[#playernamesor + 1] = tgs[I]
+								playernamesor[#playernamesor + 1] = ", "
+							else 
+								playernamesor[#playernamesor + 1] =  " or "
+								playernamesor[#playernamesor + 1] = tgs[I] 
+								playernamesor[#playernamesor + 1] = "?"
+							end
+						end
+						return false,{"Multiple targets found, did you mean ", unpack(playernamesor) }
+					end
+					for k,v in pairs(tgs)do 
+						Targets[#Targets + 1] = v 
+					end 
 				
-					Mercury.Util.Broadcast({Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default, " has " .. com.Verb .." ",gabe,Mercury.Config.Colors.Default, "."})
-				else
-			
-					if #supresstab > 0 then 
-					
-						Mercury.Util.Broadcast(supresstab)
-					end
 				end
-
+				
 			end
-
-			return true,"Command completed successfully."
-
 		end
 
-	end
+		local success,error,custom,ctable
+		for k,v in pairs(Targets)do 
+			local ar2 = args
+			ar2[1] = v
+			/////////Problem Here
+			success,error,custom,ctable = CommandTable._CALLFUNC(caller,ar2)
+			
+			if type(error) == "string" then // Legacy command support
+				if error == "@SYNTAX_ERR" then
+					error = {"Command syntax error. Syntax of this command is: ", command ,	" ",	CommandTable.Useage}
+				else 
+					error = {error}
+				end
+			end
+			if success then 
+				if custom then 
+					if not silent then 
+						Mercury.Util.Broadcast({Mercury.Config.Colors.Server, unpack( ctable ) })
+					else 
+						Mercury.Util.SendMessage(caller, {Mercury.Config.Colors.Server, "(SILENT) ", unpack( ctable ) })
+					end 
+
+				else 
+					if not silent then 
+						Mercury.Util.Broadcast({Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default, " has " .. CommandTable.Verb .." ",v,Mercury.Config.Colors.Default, "."})				
+					else 
+						Mercury.Util.SendMessage(caller, {Mercury.Config.Colors.Server,"(SILENT) ",caller,Mercury.Config.Colors.Default, " has " .. CommandTable.Verb .." ",v,Mercury.Config.Colors.Default, "."})
+					end
+
+				end
+				return true,{"Command completed successfully. "} 
+
+			else 
+				return false,error
+			end
+		end
+		 
+		return true,{"Command completed successfully."}
+	end // END OF TARGETED COMMANDS
+	//////////////////////////////////////////////////////////////////////
+
+
+	////////////////NON TARGETED COMMANDS//////////////////////
 
 
 
+	local success,error,custom,ctable = CommandTable._CALLFUNC(caller,args)
+			
+			if type(error) == "string" then // Legacy command support
+				if error == "@SYNTAX_ERR" then
+					error = {"Command syntax error. Syntax of this command is: ", command ,	" ",	CommandTable.Useage}
+				else 
+					error = {error}
+				end
+			end
+			if success then 
+				if custom then 
+					if not silent then 
+						Mercury.Util.Broadcast({Mercury.Config.Colors.Server, unpack( ctable ) })
+					else 
+						Mercury.Util.SendMessage(caller, {Mercury.Config.Colors.Server, "(SILENT) ", unpack( ctable ) })
+					end 
+
+				else 
+					if not silent then 
+						Mercury.Util.Broadcast({Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default, " has " .. CommandTable.Verb .." ",v,Mercury.Config.Colors.Default, "."})				
+					else 
+						Mercury.Util.SendMessage(caller, {Mercury.Config.Colors.Server,"(SILENT) ",caller,Mercury.Config.Colors.Default, " has " .. CommandTable.Verb .." ",v,Mercury.Config.Colors.Default, "."})
+					end
+
+				end
+				return true,{"Command completed successfully. "} 
+
+			else 
+				return false,error
+			end
 
 
-
-	return false,"An undeterminable error occured while processing the command."
-
+	return false,{"Something pretty weird happened."}
 end
 
 
@@ -218,11 +263,12 @@ concommand.Add("hg",function(P,C,A)
 	local command = ""
 	local argtab = {}
 	command = A[1]
-	if !command then 
+	if !command then  
 		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,"No command specified."})
 		return false 
 	end
 	if #A > 1 then 
+
 		for I=1,#A - 1 do
 			argtab[I] = A[1 + I]
 
@@ -231,7 +277,9 @@ concommand.Add("hg",function(P,C,A)
 	end
 	local result,err = Mercury.Commands.Call(P,command,argtab,false) 
 	if result~=true and IsValid(P) then 
-		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,err})
+		print(unpack(err))
+		PrintTable(err)
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,unpack(err)})
 	end
 	if !IsValid(P) and result~=true then 
 		print(err)
@@ -250,14 +298,11 @@ concommand.Add("hgs",function(P,C,A)
 	if #A > 1 then 
 		for I=1,#A - 1 do
 			argtab[I] = A[1 + I]
-
 		end
-
 	end
 	local result,err = Mercury.Commands.Call(P,command,argtab,true) 
 	if result~=true and IsValid(P) then 
-		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,err})
-
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,unpack(err)})
 	end
 	if !IsValid(P) and result~=true then 
 		print(err)
@@ -275,20 +320,17 @@ net.Receive("Mercury:Commands",function(len,P)
 		command = net.ReadString()
 		argtab = net.ReadTable()
 	end)
-	
 	if !command then 
 		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,"No command specified."})
 		return false 
 	end
-
 	local result,err = Mercury.Commands.Call(P,command,argtab,false) 
 	if result~=true and IsValid(P) then 
-		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,err})
+		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,unpack(err)})
 	end
 	if !IsValid(P) and result~=true then 
 		print(err)
 	end
-
 end)
   
 
@@ -308,20 +350,20 @@ function Mercury.Commands.ChatHook(Plr,Text,TeamOnly)
 				
 						result,err = Mercury.Commands.Call(Plr,command,argms,false) 
 						if result~=true then 
-							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,err})
+							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,unpack(err)})
 						end
 					end
 					if firstsym == "/" then 
 						result,err = Mercury.Commands.Call(Plr,command,argms,false) 
 						if result~=true then 
-							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,err})
+							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,unpack(err)})
 						end
 						return ""
 					end
 					if firstsym == "@" then
 						result,err = Mercury.Commands.Call(Plr,command,argms,true) 
 						if result~=true then 
-							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,err})
+							Mercury.Util.SendMessage(Plr,{Mercury.Config.Colors.Error,unpack(err)})
 						end
 						return ""
 					end
@@ -336,7 +378,6 @@ hook.Add("PlayerSay","Mercury:ChatCommands",Mercury.Commands.ChatHook)
 for k,v in pairs(file.Find("mercury/commands/*.lua","LUA")) do
 	AddCSLuaFile("mercury/commands/" .. v)  // FREEZEBUG FREEZEBUG DONT SENT MAI LUA 2 CLINT PLS!
 	include("mercury/commands/" .. v)
-
 end
 
 if Mercury.Booted==true then // This will call the modhook library's hooks again. This is for lua refresh. If Mercury is fully loaded. Then it will not call the init script again. When the commands file is refreshed, the privilege registers are terminated. This will call them again.

@@ -88,6 +88,8 @@ local function GenerateSwepMenu(frame,ranktab,rindex)
 
 			local selected_index 
 
+			local at_least_one_selected
+
 			local noitems = vgui.Create( "DListView", frame)
 			noitems:AddColumn( "Useable Weapons" )
 			noitems:SetSize( 150, 355 )	
@@ -140,17 +142,47 @@ local function GenerateSwepMenu(frame,ranktab,rindex)
 			AddItemButton:SetDisabled(true)
 			AddItemButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
-				local xg = currentitems:AddLine(selected_index)
-				xg.cname = selected_index
-				local lid = noitems:GetSelectedLine()
-				noitems:RemoveLine(lid)	
-				net.Start("Mercury:Commands")
-					net.WriteString("restrictswep")
-					net.WriteTable({tostring(selected_index),"add",tostring(rindex)})
-				net.SendToServer()
-				selected_index = nil
+				if not at_least_one_selected then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+					Mercury.Menu.ShowProgress("Applying changes. . . ")
+				local dar = coroutine.create(function(thread)
+
+				local cmdcount = 0
+				for k,v in pairs(noitems.Lines) do 
+					if v:IsSelected() then 
+						cmdcount = cmdcount + 1 
+					end
+				end
+
+
+					local idx = 0
+					for k,line in pairs(noitems.Lines) do 
+				
+						if line:IsSelected()==true then
+							idx = idx + 1
+							local selected_index = line.cname
+							local xg = currentitems:AddLine(selected_index)
+							xg.cname= selected_index
+							local lid = noitems:GetSelectedLine()
+							noitems:RemoveLine(lid)	
+							net.Start("Mercury:Commands")
+								net.WriteString("restrictswep")
+								net.WriteTable({tostring(selected_index),"add",rindex})
+							net.SendToServer()
+							timer.Simple(0.3,function()
+								coroutine.resume(thread,thread)
+							end)
+							coroutine.yield()
+
+							Mercury.Menu.UpdateProgress(idx,cmdcount)
+						end
+					end
+						Mercury.Menu.CloseProgress()
+				end)
+				coroutine.resume(dar,dar)
+		
+				at_least_one_selected = false
 				AddItemButton:SetDisabled(true)
+
 				
 			end
 
@@ -163,21 +195,48 @@ local function GenerateSwepMenu(frame,ranktab,rindex)
 			RemItemButton:SetDisabled(true)
 			RemItemButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+						if not at_least_one_selected then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+					Mercury.Menu.ShowProgress("Applying changes. . . ")
+			local dar = coroutine.create(function(thread)
 
-				local xg = noitems:AddLine(selected_index)
-				xg.cname = selected_index
-				local lid = currentitems:GetSelectedLine()
-				currentitems:RemoveLine(lid)	
-				net.Start("Mercury:Commands")
-					net.WriteString("restrictswep")
-					net.WriteTable({tostring(selected_index),"remove",tostring(rindex)})
-				net.SendToServer()
-				selected_index = nil
-				RemItemButton:SetDisabled(true)
+			local cmdcount = 0
+				for k,v in pairs(currentitems.Lines) do 
+					if v:IsSelected() then 
+						cmdcount = cmdcount + 1 
+					end
+				end
+
+
+					local idx = 0
+					for k,line in pairs(currentitems.Lines) do 
+				
+						if line:IsSelected()==true then
+							idx = idx + 1
+							local selected_index = line.cname
+							local xg = noitems:AddLine(selected_index)
+							xg.cname = selected_index
+							local lid = currentitems:GetSelectedLine()
+							currentitems:RemoveLine(lid)	
+							net.Start("Mercury:Commands")
+								net.WriteString("restrictswep")
+								net.WriteTable({tostring(selected_index),"remove",rindex})
+							net.SendToServer()
+							timer.Simple(0.3,function()
+								coroutine.resume(thread,thread)
+							end)
+							coroutine.yield()
+
+							Mercury.Menu.UpdateProgress(idx,cmdcount)
+						end
+					end
+						Mercury.Menu.CloseProgress()
+				end)
+				coroutine.resume(dar,dar)
+	
+				at_least_one_selected = false
+				AddItemButton:SetDisabled(true)
 
 			end
-
 
 			function noitems:OnRowSelected(lineid,isselected)
 				local line_obj = self:GetLine(lineid)
@@ -185,7 +244,7 @@ local function GenerateSwepMenu(frame,ranktab,rindex)
 				currentitems:ClearSelection()
 				RemItemButton:SetDisabled(true)
 				AddItemButton:SetDisabled(false)
-				selected_index = line_obj.cname
+				at_least_one_selected = true 
 				return true
 			end
 
@@ -195,7 +254,7 @@ local function GenerateSwepMenu(frame,ranktab,rindex)
 				noitems:ClearSelection()
 				RemItemButton:SetDisabled(false)
 				AddItemButton:SetDisabled(true)
-				selected_index = line_obj.cname
+				at_least_one_selected = true 
 				return true
 			end
  
@@ -259,24 +318,54 @@ local function GenerateSentsMenu(frame,ranktab,rindex)
 
 			
 
-			local AddItemButton = vgui.Create( "DButton" , frame)
+				local AddItemButton = vgui.Create( "DButton" , frame)
 			AddItemButton:SetPos( 167 ,  150 )
 			AddItemButton:SetText( "-->" )
 			AddItemButton:SetSize( 40, 20 )
 			AddItemButton:SetDisabled(true)
 			AddItemButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
-				local xg = currentitems:AddLine(selected_index)
-				xg.cname = selected_index
-				local lid = noitems:GetSelectedLine()
-				noitems:RemoveLine(lid)	
-				net.Start("Mercury:Commands")
-					net.WriteString("restrictsent")
-					net.WriteTable({tostring(selected_index),"add",tostring(rindex)})
-				net.SendToServer()
-				selected_index = nil
+				if not at_least_one_selected then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+					Mercury.Menu.ShowProgress("Applying changes. . . ")
+				local dar = coroutine.create(function(thread)
+
+				local cmdcount = 0
+				for k,v in pairs(noitems.Lines) do 
+					if v:IsSelected() then 
+						cmdcount = cmdcount + 1 
+					end
+				end
+
+
+					local idx = 0
+					for k,line in pairs(noitems.Lines) do 
+				
+						if line:IsSelected()==true then
+							idx = idx + 1
+							local selected_index = line.cname
+							local xg = currentitems:AddLine(selected_index)
+							xg.cname= selected_index
+							local lid = noitems:GetSelectedLine()
+							noitems:RemoveLine(lid)	
+							net.Start("Mercury:Commands")
+								net.WriteString("restrictsent")
+								net.WriteTable({tostring(selected_index),"add",rindex})
+							net.SendToServer()
+							timer.Simple(0.3,function()
+								coroutine.resume(thread,thread)
+							end)
+							coroutine.yield()
+
+							Mercury.Menu.UpdateProgress(idx,cmdcount)
+						end
+					end
+						Mercury.Menu.CloseProgress()
+				end)
+				coroutine.resume(dar,dar)
+		
+				at_least_one_selected = false
 				AddItemButton:SetDisabled(true)
+
 				
 			end
 
@@ -289,21 +378,48 @@ local function GenerateSentsMenu(frame,ranktab,rindex)
 			RemItemButton:SetDisabled(true)
 			RemItemButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+						if not at_least_one_selected then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+					Mercury.Menu.ShowProgress("Applying changes. . . ")
+			local dar = coroutine.create(function(thread)
 
-				local xg = noitems:AddLine(selected_index)
-				xg.cname = selected_index
-				local lid = currentitems:GetSelectedLine()
-				currentitems:RemoveLine(lid)	
-				net.Start("Mercury:Commands")
-					net.WriteString("restrictsent")
-					net.WriteTable({tostring(selected_index),"remove",tostring(rindex)})
-				net.SendToServer()
-				selected_index = nil
-				RemItemButton:SetDisabled(true)
+			local cmdcount = 0
+				for k,v in pairs(currentitems.Lines) do 
+					if v:IsSelected() then 
+						cmdcount = cmdcount + 1 
+					end
+				end
+
+
+					local idx = 0
+					for k,line in pairs(currentitems.Lines) do 
+				
+						if line:IsSelected()==true then
+							idx = idx + 1
+							local selected_index = line.cname
+							local xg = noitems:AddLine(selected_index)
+							xg.cname = selected_index
+							local lid = currentitems:GetSelectedLine()
+							currentitems:RemoveLine(lid)	
+							net.Start("Mercury:Commands")
+								net.WriteString("restrictsent")
+								net.WriteTable({tostring(selected_index),"remove",rindex})
+							net.SendToServer()
+							timer.Simple(0.3,function()
+								coroutine.resume(thread,thread)
+							end)
+							coroutine.yield()
+
+							Mercury.Menu.UpdateProgress(idx,cmdcount)
+						end
+					end
+						Mercury.Menu.CloseProgress()
+				end)
+				coroutine.resume(dar,dar)
+	
+				at_least_one_selected = false
+				AddItemButton:SetDisabled(true)
 
 			end
-
 
 			function noitems:OnRowSelected(lineid,isselected)
 				local line_obj = self:GetLine(lineid)
@@ -311,7 +427,7 @@ local function GenerateSentsMenu(frame,ranktab,rindex)
 				currentitems:ClearSelection()
 				RemItemButton:SetDisabled(true)
 				AddItemButton:SetDisabled(false)
-				selected_index = line_obj.cname
+				at_least_one_selected = true 
 				return true
 			end
 
@@ -321,10 +437,9 @@ local function GenerateSentsMenu(frame,ranktab,rindex)
 				noitems:ClearSelection()
 				RemItemButton:SetDisabled(false)
 				AddItemButton:SetDisabled(true)
-				selected_index = line_obj.cname
+				at_least_one_selected = true 
 				return true
 			end
- 
 end
 --		local TOOLS = weapons.GetStored("gmod_tool").Tool
 
@@ -381,24 +496,54 @@ local function GenerateToolsMenu(frame,ranktab,rindex)
 
 			
 
-			local AddItemButton = vgui.Create( "DButton" , frame)
+					local AddItemButton = vgui.Create( "DButton" , frame)
 			AddItemButton:SetPos( 167 ,  150 )
 			AddItemButton:SetText( "-->" )
 			AddItemButton:SetSize( 40, 20 )
 			AddItemButton:SetDisabled(true)
 			AddItemButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
-				local xg = currentitems:AddLine(selected_index)
-				xg.cname = selected_index
-				local lid = noitems:GetSelectedLine()
-				noitems:RemoveLine(lid)	
-				net.Start("Mercury:Commands")
-					net.WriteString("restricttool")
-					net.WriteTable({tostring(selected_index),"add",tostring(rindex)})
-				net.SendToServer()
-				selected_index = nil
+				if not at_least_one_selected then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+					Mercury.Menu.ShowProgress("Applying changes. . . ")
+				local dar = coroutine.create(function(thread)
+
+				local cmdcount = 0
+				for k,v in pairs(noitems.Lines) do 
+					if v:IsSelected() then 
+						cmdcount = cmdcount + 1 
+					end
+				end
+
+
+					local idx = 0
+					for k,line in pairs(noitems.Lines) do 
+				
+						if line:IsSelected()==true then
+							idx = idx + 1
+							local selected_index = line.cname
+							local xg = currentitems:AddLine(selected_index)
+							xg.cname= selected_index
+							local lid = noitems:GetSelectedLine()
+							noitems:RemoveLine(lid)	
+							net.Start("Mercury:Commands")
+								net.WriteString("restricttool")
+								net.WriteTable({tostring(selected_index),"add",rindex})
+							net.SendToServer()
+							timer.Simple(0.3,function()
+								coroutine.resume(thread,thread)
+							end)
+							coroutine.yield()
+
+							Mercury.Menu.UpdateProgress(idx,cmdcount)
+						end
+					end
+						Mercury.Menu.CloseProgress()
+				end)
+				coroutine.resume(dar,dar)
+		
+				at_least_one_selected = false
 				AddItemButton:SetDisabled(true)
+
 				
 			end
 
@@ -411,21 +556,48 @@ local function GenerateToolsMenu(frame,ranktab,rindex)
 			RemItemButton:SetDisabled(true)
 			RemItemButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+						if not at_least_one_selected then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+					Mercury.Menu.ShowProgress("Applying changes. . . ")
+			local dar = coroutine.create(function(thread)
 
-				local xg = noitems:AddLine(selected_index)
-				xg.cname = selected_index
-				local lid = currentitems:GetSelectedLine()
-				currentitems:RemoveLine(lid)	
-				net.Start("Mercury:Commands")
-					net.WriteString("restricttool")
-					net.WriteTable({tostring(selected_index),"remove",tostring(rindex)})
-				net.SendToServer()
-				selected_index = nil
-				RemItemButton:SetDisabled(true)
+			local cmdcount = 0
+				for k,v in pairs(currentitems.Lines) do 
+					if v:IsSelected() then 
+						cmdcount = cmdcount + 1 
+					end
+				end
+
+
+					local idx = 0
+					for k,line in pairs(currentitems.Lines) do 
+				
+						if line:IsSelected()==true then
+							idx = idx + 1
+							local selected_index = line.cname
+							local xg = noitems:AddLine(selected_index)
+							xg.cname = selected_index
+							local lid = currentitems:GetSelectedLine()
+							currentitems:RemoveLine(lid)	
+							net.Start("Mercury:Commands")
+								net.WriteString("restricttool")
+								net.WriteTable({tostring(selected_index),"remove",rindex})
+							net.SendToServer()
+							timer.Simple(0.3,function()
+								coroutine.resume(thread,thread)
+							end)
+							coroutine.yield()
+
+							Mercury.Menu.UpdateProgress(idx,cmdcount)
+						end
+					end
+						Mercury.Menu.CloseProgress()
+				end)
+				coroutine.resume(dar,dar)
+	
+				at_least_one_selected = false
+				AddItemButton:SetDisabled(true)
 
 			end
-
 
 			function noitems:OnRowSelected(lineid,isselected)
 				local line_obj = self:GetLine(lineid)
@@ -433,7 +605,7 @@ local function GenerateToolsMenu(frame,ranktab,rindex)
 				currentitems:ClearSelection()
 				RemItemButton:SetDisabled(true)
 				AddItemButton:SetDisabled(false)
-				selected_index = line_obj.cname
+				at_least_one_selected = true 
 				return true
 			end
 
@@ -443,10 +615,9 @@ local function GenerateToolsMenu(frame,ranktab,rindex)
 				noitems:ClearSelection()
 				RemItemButton:SetDisabled(false)
 				AddItemButton:SetDisabled(true)
-				selected_index = line_obj.cname
+				at_least_one_selected = true 
 				return true
 			end
- 
 end
 
 

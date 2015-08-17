@@ -22,7 +22,6 @@ Mercury.Ranks.RankTable = {
 		superadmin = true
 
 	},
-
 }
 META = FindMetaTable("Player")
 
@@ -317,7 +316,7 @@ function META:HasPrivilege(x)
 end
 
 function META:GetImmunity()
-		return Mercury.Ranks.RankTable[self:GetRank()].immunity
+	return Mercury.Ranks.RankTable[self:GetRank()].immunity
 end
 
 function META:CanUserTarget(x)
@@ -325,14 +324,14 @@ function META:CanUserTarget(x)
 	local rd = self:GetRank()
 			r,d = Mercury.Ranks.GetProperty(rd,"only_target_self")
 			if r==true then 
-					return false 
+				return false 
 			end
 	if !x then return false end
 	return self:GetImmunity() >= x:GetImmunity()
 end
-
+///////////////////////LOADING RANKS////////////////////////
 local rnks = file.Find("mercury/ranks/*.txt","DATA")
-
+print("Loading ranks....")
 for k,v in pairs(rnks) do
 	local content = file.Read("mercury/ranks/" .. v )
 	local index = string.sub(v,0,#v-4) // rip .txt
@@ -348,8 +347,31 @@ for k,v in pairs(rnks) do
 		end
 
 	end)
+	if index=="owner" then // end users...
+	//END USERS
+	// FUCKING END USERS.
+	// FUUUUUUUUUUUUUUUUU
+
+		print("Verifying owner rank...")
+		local privbnk = rtab.privileges
+			local allcmds = false 
+			for k,v in pairs(privbnk) do 
+				if v=="@allcmds@" then 
+					allcmds = true 
+				end
+			end
+			if not allcmds then 
+				print("ERROR!:  Owner rank could not be verified to have @allcmds@, pushing @allcmds@ into rank table .")
+				privbnk[#privbnk + 1] = "@allcmds@"
+				rtab.privileges = privbnk
+			else 
+				print("OK: Owner rank verified to have @allcmds@ flag.")
+			end
+	end
 	Mercury.Ranks.RankTable[index] = rtab
 end
+print("Ranks loaded.")
+///////////////////////////////////////////////////////////
 function Mercury.Ranks.RefreshTeams()
 	for k,rtab in pairs(Mercury.Ranks.RankTable) do
 				pcall(function()
@@ -401,24 +423,7 @@ end)
 timer.Create("Mercury_UpdatePlayerInfo",0.5,0,function()
 	for k,v in pairs(player.GetAll()) do 
 		v:SetNWString("UserRank",v:GetRank())
-		/*
-		pcall(function()
-			local rnk = v:GetRank()
-		
-			local admin =  false
-			local superadmin = false
-			superadmin = Mercury.Ranks.GetProperty(rnk,"superadmin")
-			admin = Mercury.Ranks.GetProperty(rnk,"admin")
-			if admin and not superadmin then 
-				v:SetuserGroup("admin")
-			elseif superadmin then
-				v:SetUserGroup("superadmin") // gib adam pls
-			elseif not superadmin and not admin then 
-				v:SetUserGroup("guest")
-			end
 
-		end)
-		*/
 		pcall( function()
 			if Mercury.Config["UseTeams"] == true then 
 					v:SetTeam(Mercury.Ranks.RankTable[v:GetRank()].order  - Mercury.Config["TeamOffset"] )
@@ -429,26 +434,19 @@ timer.Create("Mercury_UpdatePlayerInfo",0.5,0,function()
 end)
 
 
-
 hook.Add("PlayerInitialSpawn","MARS_Rank_Initialspawn",function() 
 	Mercury.Ranks.SendRankUpdateToClients()
 end) 
 
-
 Mercury.Ranks.SendRankUpdateToClients()
-
-
-
 
 timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
 	function metaplayer:GetUserGroup()
 		return self:GetRank()
 	end
-
 	function metaplayer:IsUserGroup(grp)
 		local grp2 = string.lower(grp)
 		if self:GetRank()==grp2 then return true end
-
 		return false
 	end
 
@@ -458,16 +456,10 @@ timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
 			if Mercury.Ranks.RankTable[self:GetRank()].admin==true or Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
 				admin = true
 			end
-
 		end)
-
-
-
 		return admin
 	end
 	function metaplayer:IsSuperAdmin()
-		
-
 			local admin = false 
 			pcall(function()
 				if  Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
@@ -475,13 +467,6 @@ timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
 				end
 
 			end)
-
-
-
 		return admin
-
-
-
 	end
-
 end)

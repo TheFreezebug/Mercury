@@ -904,7 +904,7 @@ local MCMD = Mercury.Commands.CreateTable("slay", "slayed", true, "<player>", tr
 function callfunc(caller, args)
     -- Caller is the player who issued the command.
     -- args is the string or player arguments that may have been passed.
-    
+    PrintTable(args)
     if not args[1] then
         return false, "No player was supplied to the command", false, {}
     end

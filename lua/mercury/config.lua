@@ -16,6 +16,8 @@ Mercury.Config = {
 			Setting = Color(255,100,255),
 
 		},
+
+	EnabledPackages = {},
 }
  
 
@@ -26,12 +28,10 @@ Mercury.Config = {
 if SERVER then 
 	local tab = file.Read("mercury/config.txt","DATA")
 	if tab then 
-			local jdata = util.JSONToTable(tab)
-			for k,v in pairs(jdata) do
-					Mercury.Config[k] = v
-
-			end
-
+		local jdata = util.JSONToTable(tab)
+		for k,v in pairs(jdata) do
+				Mercury.Config[k] = v
+		end
 	end
 end
 
@@ -44,23 +44,13 @@ if CLIENT then
 			net.WriteTable({})
 		net.SendToServer()
 		hook.Remove("HUDPaint","MercuryGetConfig")
-
-
 	end) 
 
 	net.Receive("Mercury:Config",function()
 		local COMMAND = net.ReadString()
 		local CARGS = net.ReadTable()
 		if COMMAND=="SEND_CONFIG" then 
-			
 			Mercury.Config = CARGS
 		end
-		print("HE")
-
 	end)
-
-
-
-
-
 end
