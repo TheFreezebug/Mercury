@@ -210,7 +210,7 @@ function Mercury.Commands.Call(caller,command,args,silent)
 				return true,{"Command completed successfully. "} 
 
 			else 
-				return false,{error}
+				return false,error
 			end
 		end
 		 
@@ -251,7 +251,7 @@ function Mercury.Commands.Call(caller,command,args,silent)
 				return true,{"Command completed successfully. "} 
 
 			else 
-				return false,{error}
+				return false,error
 			end
 
 
@@ -277,6 +277,8 @@ concommand.Add("hg",function(P,C,A)
 	end
 	local result,err = Mercury.Commands.Call(P,command,argtab,false) 
 	if result~=true and IsValid(P) then 
+		print(unpack(err))
+		PrintTable(err)
 		Mercury.Util.SendMessage(P,{Mercury.Config.Colors.Error,unpack(err)})
 	end
 	if !IsValid(P) and result~=true then 

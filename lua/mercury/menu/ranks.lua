@@ -155,6 +155,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 		end
 
 			local selected_index 
+			local one_line_selected = false
 
 			local nocommands = vgui.Create( "DListView", frame)
 			nocommands:AddColumn( "Availible Commands" )
@@ -204,16 +205,43 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 			AddCommandButton:SetDisabled(true)
 			AddCommandButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
-				local xg = currentcommands:AddLine(selected_index)
-				xg.privilege = selected_index
-				local lid = nocommands:GetSelectedLine()
-				nocommands:RemoveLine(lid)	
-				net.Start("Mercury:Commands")
-					net.WriteString("rankmodpriv")
-					net.WriteTable({rindex,"add",tostring(selected_index)})
-				net.SendToServer()
-				selected_index = nil
+				if not one_line_selected then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+				local cmdcount = 0
+				for k,v in pairs(nocommands.Lines) do 
+					if v:IsSelected() then 
+						cmdcount = cmdcount + 1 
+					end
+				end
+
+				Mercury.Menu.ShowProgress("Applying changes. . . ")
+				local dar = coroutine.create(function(thread)
+					
+					local idx = 0
+					for k,line in pairs(nocommands.Lines) do 
+				
+						if line:IsSelected()==true then
+							idx = idx + 1
+							local selected_index = line.privilege
+							local xg = currentcommands:AddLine(selected_index)
+							xg.privilege = selected_index
+							local lid = nocommands:GetSelectedLine()
+							nocommands:RemoveLine(lid)	
+							net.Start("Mercury:Commands")
+								net.WriteString("rankmodpriv")
+								net.WriteTable({rindex,"add",tostring(selected_index)})
+							net.SendToServer()
+							timer.Simple(0.3,function()
+								coroutine.resume(thread,thread)
+							end)
+							coroutine.yield()
+
+							Mercury.Menu.UpdateProgress(idx,cmdcount)
+						end
+					end
+						Mercury.Menu.CloseProgress()
+				end)
+				coroutine.resume(dar,dar)
+				one_line_selected = false
 				AddCommandButton:SetDisabled(true)
 				
 			end
@@ -227,17 +255,47 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 			RemCommandButton:SetDisabled(true)
 			RemCommandButton.DoClick = function(self)
 				if self:GetDisabled()==true then return false end
-				if !selected_index then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+				if not one_line_selected then surface.PlaySound("buttons/button2.wav") return false else surface.PlaySound("mercury/mercury_ster_switch.ogg")  end
+			
 
-				local xg = nocommands:AddLine(selected_index)
-				xg.privilege = selected_index
-				local lid = currentcommands:GetSelectedLine()
-				currentcommands:RemoveLine(lid)	
-				net.Start("Mercury:Commands")
-					net.WriteString("rankmodpriv")
-					net.WriteTable({rindex,"remove",tostring(selected_index)})
-				net.SendToServer()
-				selected_index = nil
+				local cmdcount = 0
+				for k,v in pairs(currentcommands.Lines) do 
+					if v:IsSelected() then 
+						cmdcount = cmdcount + 1 
+					end
+				end
+				local idx = 0
+				Mercury.Menu.ShowProgress("Applying changes. . . ")
+				local dar = coroutine.create(function(thread)
+					
+					PrintTable(currentcommands.Lines)
+					for k,line in pairs(currentcommands.Lines) do 
+				
+						if line:IsSelected()==true then
+							idx = idx + 1
+							local selected_index = line.privilege
+							local xg = nocommands:AddLine(selected_index)
+							xg.privilege = selected_index
+							local lid = currentcommands:GetSelectedLine()
+							currentcommands:RemoveLine(lid)	
+							net.Start("Mercury:Commands")
+								net.WriteString("rankmodpriv")
+								net.WriteTable({rindex,"remove",tostring(selected_index)})
+							net.SendToServer()
+							timer.Simple(0.5,function()
+								coroutine.resume(thread,thread)
+							end)
+							coroutine.yield()
+							Mercury.Menu.UpdateProgress(idx,cmdcount)
+						end
+					end
+						Mercury.Menu.CloseProgress()
+				end)
+				coroutine.resume(dar,dar)
+
+
+
+				one_line_selected = false 
 				RemCommandButton:SetDisabled(true)
 
 			end
@@ -249,7 +307,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 				currentcommands:ClearSelection()
 				RemCommandButton:SetDisabled(true)
 				AddCommandButton:SetDisabled(false)
-				selected_index = line_obj.privilege
+				one_line_selected = true
 				return true
 			end
 
@@ -259,7 +317,7 @@ local function ApplyTeamData(frame,rtab,line,rindex,ranklist)
 				nocommands:ClearSelection()
 				RemCommandButton:SetDisabled(false)
 				AddCommandButton:SetDisabled(true)
-				selected_index = line_obj.privilege
+				one_line_selected = true
 				return true
 			end
  

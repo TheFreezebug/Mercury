@@ -133,7 +133,8 @@ function Mercury.Menu.CloseProgress()
 end
 
 function Mercury.Menu.UpdateProgress(current,max,newtitle)
-	progresss = current 
+	print("Should update?")
+	progress = current 
 	maxprogress = max
 	if newtitle then 
 		progresstext = newtitle 
