@@ -31,3 +31,13 @@ function Mercury.ModHook.Remove(hk,uname)
 	if !hooktab[hk] then hooktab[hk] = {} end
 	hooktab[hk][uname] = nil // Bad practice to rely on GC, but oh well.
 end
+
+
+
+
+
+
+
+
+
+hook.Remove("HUDPaint","Render_Upset")

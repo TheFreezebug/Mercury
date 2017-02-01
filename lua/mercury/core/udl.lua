@@ -62,14 +62,20 @@ function UDL.SaveData(data,tablea)
 end
 
 
-
+ 
 function UDL.SaveAllActive()
 	for k,v in pairs(player.GetAll()) do 
 		if !v._RANK then return end
-		UDL.SaveData(v,{rank = v._RANK})
+		UDL.SaveData(v,{rank = v._RANK,userdata = v._MercuryUserData})
 	end
 end
 
+function UDL.SaveSingle(v)
+	
+		if !v._RANK then return end
+		UDL.SaveData(v,{rank = v._RANK,userdata = v._MercuryUserData})
+		
+end
 
 function UDL.PIS(P)
 	local shouldrank = UDL.GetData(P)
@@ -77,8 +83,13 @@ function UDL.PIS(P)
 		shouldrank.rank = "owner"
 		UDL.SaveData(P,shouldrank)
 	end
+
 	Mercury.Ranks.SetRank(P,shouldrank.rank)
+	P._MercuryUserData = shouldrank.userdata or {}
 	P.RankLoaded = true
+	P._MercuryUserData = {LastKnownName = P:Nick()}
+	P._MercuryUserDataLoaded = true
+	Mercury.ModHook.Call("PostUserDataLoaded",P,shouldrank.userdata)
 end
 
 function UDL.SetSaveRank(P,rank)
@@ -87,7 +98,7 @@ function UDL.SetSaveRank(P,rank)
 		return a,d,c
 	end
 	local x = P:GetRank()
-	UDL.SaveData(P,{rank = x})
+	UDL.SaveData(P,{rank = x,userdata = P._MercuryUserData})
 	return true
 end
 
@@ -97,4 +108,5 @@ hook.Add("PlayerInitialSpawn","Mercury:UDL:PlayerSpawnRank",UDL.PIS)
 timer.Create("Mercury:SaveRankGlobal",30,0,function()
 	Mercury.UDL.SaveAllActive()
 end)
+
 

@@ -4,13 +4,30 @@ if SERVER then
     local function PlayerPickup( ply, ent )
         if ply:HasPrivilege("physgunpickup") and ent:GetClass():lower() == "player" then
             if ply:CanUserTarget(ent) then
+                ent:SetGravity(0.00001)
+
                 return true
+
             else 
                 return false
             end
         end
     end
     hook.Add( "PhysgunPickup", "MercuryPhysgunPickup", PlayerPickup )
+
+
+     local function PlayerPickup( ply, ent )
+        if ply:HasPrivilege("physgunpickup") and ent:GetClass():lower() == "player" then
+            if ply:CanUserTarget(ent) then
+                ent:SetGravity(1)
+                return true
+
+            else 
+                return false
+            end
+        end
+    end
+    hook.Add( "PhysgunDrop", "MercuryPhysgunDrop", PlayerPickup )
 end
 
 -------------------------
@@ -87,9 +104,34 @@ end
 
 -- Explode
 local MCMD = Mercury.Commands.CreateTable("explode", "exploded", true, "<player>", true, true, true, "Fun")
+
+
 function callfunc(caller,args)
+
+
+
 	local ply = args[1]
 	local rmtab = {}
+
+    if !ply._MercuryExplodeCount then 
+        ply._MercuryExplodeCount = 0
+    end
+    if !ply._MercuryExplodeTimeout then 
+        ply._MercuryExplodeTimeout = CurTime() + 10
+    end
+
+    if ply._MercuryExplodeCount > 2 then 
+        if CurTime() < ply._MercuryExplodeTimeout then 
+            return false,{"You're executing this command too fast. (" .. math.Round( ply._MercuryExplodeTimeout - CurTime() ) .. ")"}            
+        elseif CurTime() > ply._MercuryExplodeTimeout then 
+            ply._MercuryExplodeTimeout = CurTime() + 10
+            ply._MercuryExplodeCount = 0
+        end
+    end
+
+    ply._MercuryExplodeCount = ply._MercuryExplodeCount + 1
+
+
 	ply:EmitSound("items/cart_explode_falling.wav",150)
     ply:SetPos(ply:GetPos() + Vector(0,0,10))
     ply:SetVelocity(Vector(0,0,99999))
@@ -113,7 +155,6 @@ function callfunc(caller,args)
             rmtab[I]:Spawn()
             local trail = util.SpriteTrail(rmtab[I], 0, Color(math.random(1,255) ,math.random(1,255) ,math.random(1,255) ), false, 15, 1, 10, 3, "trails/plasma.vmt")
             rmtab[I]:GetPhysicsObject():SetVelocityInstantaneous(Vector(math.random(-1000,1000) ,math.random(-1000,1000) ,1000))
-
         end
         timer.Simple(10,function()
             for k,v in pairs(rmtab) do
@@ -165,77 +206,52 @@ function MCMD.GenerateMenu(frame)
 end 
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
--- Noclip
-local MCMD = Mercury.Commands.CreateTable("noclip", "", true, "<player>", true, false, true, "Fun")
-function callfunc(caller, args)
-    local target_player = nil
-    if !args[1] then 
-        target_player = caller 
-    end
 
-    if args[1] then
-        if type(args[1])=="string" then 
-            local plr = Mercury.Commands.PlayerLookup(args[1])
-            if IsValid(plr) then 
-                target_player = plr 
-            end 
-        elseif type(args[1])=="Player" then 
-                target_player = args[1]
+local MCMD = Mercury.Commands.CreateTable("explode2", "exploded", true, "<player>", true, true, true, "Fun")
+MCMD.AllowWildcard = true
+
+function callfunc(caller,args)
+
+    local ply = args[1]
 
 
-        end 
 
-    end
-
-
-    if IsValid(caller) then 
-        if not caller:CanUserTarget(target_player) then 
-                return false,"You cannot target this person."
-        end
-
-    end
-
-    if !target_player or !IsValid(target_player) then 
-        return false,"Could not find target."
-    end
-
-    target_player:ExitVehicle()
-    
-    if target_player:GetMoveType() == MOVETYPE_WALK then
-        target_player:SetMoveType( MOVETYPE_NOCLIP )
-    elseif target_player:GetMoveType() == MOVETYPE_NOCLIP then
-        target_player:SetMoveType( MOVETYPE_WALK )
-    else
-        return false, target_player:Nick() .. " can't be noclipped right now", false, {}
-    end
+    ply:SetPos(ply:GetPos() + Vector(0,0,10))
+    ply:SetVelocity(Vector(0,0,500) + ply:GetVelocity() * 0.3)
 
 
-    if target_player == caller then
-        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " toggled noclip for themselves."}
-    else
-        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " toggled noclip for ", target_player,  Mercury.Config.Colors.Default, "."}
-    end
-    return true, "", false, {}
+        ply:EmitSound("mvm/mvm_tank_explode.wav",50,math.random(50,150))
+
+              local explosive = ents.Create( "env_explosion" )
+                        explosive:SetPos( ply:GetPos() )
+                        explosive:SetOwner( ply )
+                        explosive:Spawn()
+                        explosive:SetKeyValue( "iMagnitude", "1" )
+                        explosive:Fire( "Explode", 0, 0 )
+                ply:Kill()
+
+
+    return true,"",false,{}
 end
 
 function MCMD.GenerateMenu(frame)
     local selectedplayer = nil
-    
+ 
     local ctrl = vgui.Create( "DListView", frame)
-    ctrl:AddColumn("Players")
-    ctrl:SetSize(210, 380)    
-    ctrl:SetPos(10, 0)
+    ctrl:AddColumn( "Players" )
+    ctrl:SetSize( 210, 380 )    
+    ctrl:SetPos( 10, 0 )
                
-    local NoclipButton = vgui.Create("DButton" , frame)
-    NoclipButton:SetPos(240, 40)
-    NoclipButton:SetText("Toggle Noclip")
-    NoclipButton:SetSize(130, 60)
-    NoclipButton:SetDisabled(true)
-    NoclipButton.DoClick = function(self)
-        if self:GetDisabled() == true then return false end
+    local Button = vgui.Create( "DButton" , frame)
+    Button:SetPos( 240, 40 )
+    Button:SetText( "Explode 2" )
+    Button:SetSize( 130, 60 )
+    Button:SetDisabled(true)
+    Button.DoClick = function(self)
+        if self:GetDisabled()==true then return false end
         surface.PlaySound("buttons/button3.wav")
         net.Start("Mercury:Commands")
-            net.WriteString("noclip")
+            net.WriteString("explode2")
             net.WriteTable({selectedplayer})
         net.SendToServer()
     end
@@ -247,15 +263,18 @@ function MCMD.GenerateMenu(frame)
         item.ply = ply
     end
  
-    function ctrl:OnRowSelected(lineid, isselected)
+    function ctrl:OnRowSelected(lineid,isselected)
         local line_obj = self:GetLine(lineid)
         surface.PlaySound("buttons/button6.wav")
-        NoclipButton:SetDisabled(false)
+        Button:SetDisabled(false)
         selectedplayer = line_obj.ply
         return true
     end
-end
+end 
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+
 
 -- Slap
 local MCMD = Mercury.Commands.CreateTable("slap", "", true, "<player> <damage>", true, true, true, "Fun")
@@ -308,7 +327,7 @@ function callfunc(caller, args)
             -- Set the new health
             args[1]:SetHealth(newHp)
         end
-        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " slapped ", args[1], " for ", Mercury.Config.Colors.Arg, damage, Mercury.Config.Colors.Default, " damage."}
+        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " slapped ", args[1], " for ", Mercury.Config.Colors.Arg, tostring( damage ), Mercury.Config.Colors.Default, " damage."}
     end
     
     -- Finish!
@@ -599,10 +618,21 @@ end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
 -- HP
-local MCMD = Mercury.Commands.CreateTable("hp", "", true, "<player> <amount>", true, true, true, "Fun")
+MCMD = {
+    ["Command"] = "hp",
+    ["Verb"] = "asd",
+    ["RconUse"] = true,
+    ["Useage"] = "hp <player> <amount>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = true,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
 function callfunc(caller, args)
     if not args[1] then return false, "No target player was specified." end
-    if not args[2] or tonumber(args[2]) < 0 then return false, "No health amount was specified." end
+    if not args[2] or !tonumber(args[2])  then return false, "No health amount was specified." end
 
     if IsValid(args[1]) and args[1]:IsPlayer() then 
         -- Set the new health
@@ -676,16 +706,34 @@ Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
 --Armor
 local MCMD = Mercury.Commands.CreateTable("armor", "", true, "<player> <amount>", true, true, true, "Fun")
+
+
+MCMD = {
+    ["Command"] = "armor",
+    ["Verb"] = "asd",
+    ["RconUse"] = true,
+    ["Useage"] = "armor <player> <amount>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = true,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
+
 function callfunc(caller, args)
     if not args[1] then return false, "No target player was specified." end
-    if not args[2] or tonumber(args[2]) < 0 then return false, "No armor amount was specified." end
+    if not args[2] or !tonumber(args[2])  then return false, "@SYNTAX_ERR" end
     if tonumber(args[2]) > 255 then args[2] = 255 end
 
     if IsValid(args[1]) and args[1]:IsPlayer() then 
         -- Set the new armor
         local armor = tonumber(args[2])
+        if !armor then 
+            return  false,"@SYNTAX_ERR"
+        end
         args[1]:SetArmor(armor)
-        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " has set the armor of ", args[1], " to ", Mercury.Config.Colors.Arg, armor, Mercury.Config.Colors.Default, "."}
+        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " has set the armor of ", args[1], " to ", Mercury.Config.Colors.Arg, args[2], Mercury.Config.Colors.Default, "."}
     end
     
     -- Finish!
@@ -750,6 +798,109 @@ function MCMD.GenerateMenu(frame)
     end
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+
+
+MCMD = {
+    ["Command"] = "gravity",
+    ["Verb"] = "asd",
+    ["RconUse"] = true,
+    ["Useage"] = "<player> <amount>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = true,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
+
+function callfunc(caller, args)
+    if not args[1] then return false, "No target player was specified." end
+    if not args[2] or !tonumber(args[2])  then return false, "@SYNTAX_ERR" end
+    if tonumber(args[2]) > 255 then args[2] = 255 end
+
+    if IsValid(args[1]) and args[1]:IsPlayer() then 
+        -- Set the new armor
+        local armor = tonumber(args[2])
+        if armor == 0 then armor = 0.00001 end
+        if !armor then 
+            return  false,"@SYNTAX_ERR"
+        end
+        args[1]:SetGravity(armor)
+        return true, "", true, {Mercury.Config.Colors.Server, caller, Mercury.Config.Colors.Default, " has set the gravity of ", args[1], " to ", Mercury.Config.Colors.Arg, args[2], Mercury.Config.Colors.Default, "."}
+    end
+    
+    -- Finish!
+    return true, "", false, {}
+end
+
+function MCMD.GenerateMenu(frame)
+    local selectedplayer = nil
+
+    local ctrl = vgui.Create( "DListView", frame)
+    ctrl:AddColumn("Players")
+    ctrl:SetSize(210, 380)    
+    ctrl:SetPos(10, 0)
+
+    local Armor = vgui.Create("DTextEntry", frame)
+    Armor:SetPos(240, 20)
+    Armor:SetSize(130, 20)
+    Armor:CheckNumeric(true)
+    Armor:SetText("Amount")
+    Armor:SetEnterAllowed(false)
+               
+    local ArmorButton = vgui.Create("DButton" , frame)
+    ArmorButton:SetPos(240, 40)
+    ArmorButton:SetText("Set Health")
+    ArmorButton:SetSize(130, 60)
+    ArmorButton:SetDisabled(true)
+    ArmorButton.DoClick = function(self)
+        if self:GetDisabled() == true then return false end
+        local armor = 0
+        local IsNumeric = true
+        local armorVal = Armor:GetValue()
+        for i=1, #armorVal do
+            if (string.byte(armorVal[i]) >= 48 and string.byte(armorVal[i]) <= 57) then
+                continue
+            else
+                IsNumeric = false
+                break
+            end
+        end
+        if IsNumeric == true then armor = armorVal end
+
+        surface.PlaySound("buttons/button3.wav")
+        net.Start("Mercury:Commands")
+            net.WriteString("armor")
+            net.WriteTable({selectedplayer, armor})
+        net.SendToServer()
+    end
+ 
+    local players = player.GetAll()
+    local t = {}
+    for _, ply in ipairs(players) do
+        local item = ctrl:AddLine(ply:Nick())
+        item.ply = ply
+    end
+ 
+    function ctrl:OnRowSelected(lineid, isselected)
+        local line_obj = self:GetLine(lineid)
+        surface.PlaySound("buttons/button6.wav")
+        ArmorButton:SetDisabled(false)
+        selectedplayer = line_obj.ply
+        return true
+    end
+end
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+
+
+
+
+
+
 
 -- Ignite
 local MCMD = Mercury.Commands.CreateTable("ignite", "", true, "<player> <time>", true, true, true, "Fun")
@@ -870,7 +1021,7 @@ function MCMD.GenerateMenu(frame)
 
     local SpawnButton = vgui.Create("DButton" , frame)
     SpawnButton:SetPos(240, 40)
-    SpawnButton:SetText("Extinguish")
+    SpawnButton:SetText("DONT PUSH IT")
     SpawnButton:SetSize(130, 60)
     SpawnButton:SetDisabled(true)
     SpawnButton.DoClick = function(self)
@@ -899,124 +1050,164 @@ function MCMD.GenerateMenu(frame)
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
--- Slay
-local MCMD = Mercury.Commands.CreateTable("slay", "slayed", true, "<player>", true, true, true, "Fun")
-function callfunc(caller, args)
-    -- Caller is the player who issued the command.
-    -- args is the string or player arguments that may have been passed.
-    PrintTable(args)
-    if not args[1] then
-        return false, "No player was supplied to the command", false, {}
-    end
 
-    if args[1] and IsValid(args[1]) and args[1]:IsPlayer() then
-        if args[1]:Alive() then
-            args[1]:Kill()
-        else
-            return false, args[1]:Nick().." is already dead", false, {}
-        end
-    end
 
-    return true, "", false, {}
+
+
+
+
+
+
+PLY = FindMetaTable("Player")
+
+if PLY.OldNick then 
+    PLY.Nick = PLY.OldNick
+end 
+
+if PLY.OldName then 
+    PLY.Name = PLY.OldName 
+end 
+
+PLY.OldNick = PLY.Nick 
+PLY.OldName = PLY.Name 
+
+
+function PLY:GetOverrideName()
+    local asd = self:GetNWString("OverrideName",nil) 
+    if !asd then return nil end 
+    if #asd < 1 then return nil end 
+    return asd 
+
+
+end 
+
+
+function PLY:Nick() 
+    if self:GetOverrideName() then 
+        return self:GetOverrideName() 
+    end 
+    return self:OldNick()
+end 
+
+
+function PLY:Name() 
+    if self:GetOverrideName() then 
+        return self:GetOverrideName() 
+    end 
+    return self:OldName()
+end 
+
+
+MCMD = {
+    ["Command"] = "changename",
+    ["Verb"] = "name changed",
+    ["RconUse"] = true,
+    ["Useage"] = "<player> <name>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
+
+ function callfunc(caller, args)
+    args[1]:SetNWString("OverrideName",args[2])
+
+    return true,{},true,{Mercury.Config.Colors.Server,caller,Mercury.Config.Colors.Default," has changed ",args[1], "'s name to ", Mercury.Config.Colors.Arg,args[2]}
 end
 
-
 function MCMD.GenerateMenu(frame)
-    local selectedplayer = nil
- 
-    local ctrl = vgui.Create( "DListView", frame)
-    ctrl:AddColumn("Players")
-    ctrl:SetSize(210, 380)    
-    ctrl:SetPos(10, 0)
-               
-    local SpawnButton = vgui.Create("DButton" , frame)
-    SpawnButton:SetPos(240, 40)
-    SpawnButton:SetText("Slay")
-    SpawnButton:SetSize(130, 60)
-    SpawnButton:SetDisabled(true)
-    SpawnButton.DoClick = function(self)
-        if self:GetDisabled() == true then return false end
-        surface.PlaySound("buttons/button3.wav")
-        net.Start("Mercury:Commands")
-            net.WriteString("slay")
-            net.WriteTable({selectedplayer})
-        net.SendToServer()
-    end
- 
-    local players = player.GetAll()
-    local t = {}
-    for _, ply in ipairs( players ) do
-        local item = ctrl:AddLine( ply:Nick() )
-        item.ply = ply
-    end
- 
-    function ctrl:OnRowSelected(lineid, isselected)
-        local line_obj = self:GetLine(lineid)
-        surface.PlaySound("buttons/button6.wav")
-        SpawnButton:SetDisabled(false)
-        selectedplayer = line_obj.ply
-        return true
-    end
+
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
--- Silent Slay
-local MCMD = Mercury.Commands.CreateTable("sslay", "", true, "<player>", true, true, true, "Fun")
-function callfunc(caller, args)
-    -- Caller is the player who issued the command.
-    -- args is the string or player arguments that may have been passed.
-    
-    if not args[1] then
-        return false, "No player was supplied", false, {}
+
+
+
+
+
+MCMD = {
+    ["Command"] = "namechange",
+    ["Verb"] = "name changed",
+    ["RconUse"] = true,
+    ["Useage"] = "<player> <name>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+local function OnPlayerChat( player, strText, bTeamOnly, bPlayerIsDead )
+
+    --
+    -- I've made this all look more complicated than it is. Here's the easy version
+    --
+    -- chat.AddText( player, Color( 255, 255, 255 ), ": ", strText )
+    --
+
+    local tab = {}
+
+    if ( bPlayerIsDead ) then
+        table.insert( tab, Color( 255, 30, 40 ) )
+        table.insert( tab, "*DEAD* " )
     end
 
-    if args[1] and IsValid(args[1]) and args[1]:IsPlayer() then
-        if args[1]:Alive() then
-            args[1]:KillSilent()
-        else
-            return false, args[1]:Nick().." is already dead", false, {}
-        end
+    if ( bTeamOnly ) then
+        table.insert( tab, Color( 30, 160, 40 ) )
+        table.insert( tab, "( TEAM ) " )
     end
 
-    return false, " "
+    if ( IsValid( player ) ) then
+        table.insert( tab, team.GetColor(player:Team()))
+        table.insert( tab, player:Nick() )
+    else
+        table.insert( tab, "Console" )
+    end
+
+    table.insert( tab, Color( 255, 255, 255 ) )
+    table.insert( tab, ": "..strText )
+
+    chat.AddText( unpack( tab ) )
+
+    return true
+
 end
 
+hook.Add("OnPlayerChat","asd",OnPlayerChat)
+
+
+
+
+
+//
+MCMD = {
+    ["Command"] = "ach",
+    ["Verb"] = "achievement",
+    ["RconUse"] = true,
+    ["Useage"] = "<player> <name>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = false,
+    ["Category"] = "Fun",
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
+
+
+ function callfunc(caller, args)
+
+    Mercury.Util.Broadcast({args[1],Color(255,255,255)," earned the achievement ", Color(255,201,0),table.concat(args," ",2)})
+
+    return true,{},true,{}
+end
 
 function MCMD.GenerateMenu(frame)
-    local selectedplayer = nil
- 
-    local ctrl = vgui.Create( "DListView", frame)
-    ctrl:AddColumn("Players")
-    ctrl:SetSize(210, 380)    
-    ctrl:SetPos(10, 0)
-               
-    local SpawnButton = vgui.Create("DButton" , frame)
-    SpawnButton:SetPos(240, 40)
-    SpawnButton:SetText("Silent Slay")
-    SpawnButton:SetSize(130, 60)
-    SpawnButton:SetDisabled(true)
-    SpawnButton.DoClick = function(self)
-        if self:GetDisabled() == true then return false end
-        surface.PlaySound("buttons/button3.wav")
-        net.Start("Mercury:Commands")
-            net.WriteString("sslay")
-            net.WriteTable({selectedplayer})
-        net.SendToServer()
-    end
- 
-    local players = player.GetAll()
-    local t = {}
-    for _, ply in ipairs( players ) do
-        local item = ctrl:AddLine( ply:Nick() )
-        item.ply = ply
-    end
- 
-    function ctrl:OnRowSelected(lineid, isselected)
-        local line_obj = self:GetLine(lineid)
-        surface.PlaySound("buttons/button6.wav")
-        SpawnButton:SetDisabled(false)
-        selectedplayer = line_obj.ply
-        return true
-    end
+
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
+
+
+

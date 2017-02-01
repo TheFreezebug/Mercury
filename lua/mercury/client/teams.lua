@@ -16,7 +16,7 @@ Mercury.Ranks.RankTable["default"] =  { -- MARS is dependent on this rank.
 Mercury.Ranks.RankTable["owner"] = {
 	color = Color(255,255,255),
 	title = "Owner",
-	privileges = {"@allcmds@"},
+	privileges = {"*root"},
 	immunity = 1000,
 	order = 1,
 	admin = true,
@@ -29,6 +29,7 @@ local command = net.ReadString()
 local args =  net.ReadTable()
 
 	if command=="SEND_RANKS" then
+
 		Mercury.Ranks.RankTable = args
 		for k,rtab in pairs(Mercury.Ranks.RankTable) do
 			local title = rtab.title
@@ -37,8 +38,8 @@ local args =  net.ReadTable()
 			if Mercury.Config["UseTeams"]==true then 
 				team.SetUp(order - Mercury.Config["TeamOffset"]  , title, color, false ) 
 			end
-
 		end
+		
 	end
 
 
@@ -54,7 +55,7 @@ function metaplayer:GetUserRank()
 	return xad
 end
 
-
+ 
 
 function metaplayer:GetRank()
 	local xad = self:GetNWString("UserRank")
@@ -79,8 +80,17 @@ function metaplayer:HasPrivilege(x)
 	x = string.lower(x)
 		local gax = Mercury.Ranks.RankTable[rnk]
 		for k,v in pairs(gax["privileges"]) do
-			if x==v or v=="@allcmds@" then return true end
+			if x==v or v=="*root" then return true end
 		end
+/*
+		if Mercury.Commands.CommandTable[x] then
+			
+			if Mercury.Commands.CommandTable[x].UseCustomPrivCheck then 
+				return Mercury.Commands.CommandTable[x].PrivCheck(self)
+			end 
+			
+		end 
+		*/
 		return false 
 end
 
@@ -111,20 +121,25 @@ timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
 
 	function metaplayer:IsAdmin()
 		local admin = false 
-		pcall(function()
-			if Mercury.Ranks.RankTable[self:GetRank()].admin==true or Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
-				admin = true
-			end
+			if Mercury then 
+				if Mercury.Ranks then 
+					if Mercury.Ranks.RankTable then 
+						if Mercury.Ranks.RankTable[self:GetRank()] then 
+							if Mercury.Ranks.RankTable[self:GetRank()].admin==true or Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
+											admin = true
+							end
 
-		end)
+						end 
 
+					end 
 
+				end 
 
+			end 
 		return admin
 	end
-	function metaplayer:IsSuperAdmin()
-		
 
+	function metaplayer:IsSuperAdmin()
 			local admin = false 
 			pcall(function()
 				if  Mercury.Ranks.RankTable[self:GetRank()].superadmin==true then
@@ -132,13 +147,7 @@ timer.Create("Mercury.OverrideAdmin",1,0,function() // Its just me, gabe newell.
 				end
 
 			end)
-
-
-
 		return admin
-
-
-
 	end
 
 end)

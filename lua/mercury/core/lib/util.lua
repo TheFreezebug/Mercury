@@ -59,3 +59,5 @@ function Mercury.Util.StringArguments(strang)
     
     return retab
 end
+
+Mercury.Util.AbstractifyText = Mercury.Util.StringArguments

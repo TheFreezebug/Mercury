@@ -20,51 +20,58 @@ local function DoLayout(gframe,bantable)
 			local steamid = ""
 			local selban = nil
 			local ctrl = vgui.Create( "DListView", gframe)
+			ctrl:AddColumn( "Name" )
 			ctrl:AddColumn( "Steam ID" )
 			ctrl:AddColumn( "Time left" )
 			ctrl:AddColumn( "Banning Administrator" )
 			ctrl:AddColumn( " Reason " )
+
 			ctrl:SetSize( 450, 390 )	
 			ctrl:SetPos( 10, 10 )
-				
-			local UnbanButton = vgui.Create( "DButton" , gframe)
-			UnbanButton:SetPos( 460,  370 )
-			UnbanButton:SetText( "Unban user" )
-			UnbanButton:SetDisabled(true)
-			UnbanButton:SetSize(170,30)
+			ctrl:Dock(FILL)	
+
+
 
 			local ReasonLabel = vgui.Create( "DLabel", gframe )
-			ReasonLabel:SetPos( 460, 32 )
 			ReasonLabel:SetText( "Reason" )
 			ReasonLabel:SetTextColor(Color(1,1,1,255))
+			ReasonLabel:Dock(TOP)
+
 
 			local ReasonBox = vgui.Create( "DTextEntry", gframe)
-			ReasonBox:SetPos(460, 50)
-			ReasonBox:SetSize( 170, 16)
+			ReasonBox:Dock(TOP)
 			ReasonBox:SetText( "Select a ban" )
+
+
+			local UnbanButton = vgui.Create( "DButton" , gframe)
+				UnbanButton:Dock(TOP)
+				UnbanButton:SetText("Unban User")
+
+				
 
 
 
 			local TimeLabel = vgui.Create( "DLabel", gframe )
-			TimeLabel:SetPos( 460, 64 )
-			TimeLabel:SetText( "Time" )
-			TimeLabel:SetTextColor(Color(1,1,1,255))
+					TimeLabel:SetText( "Time" )
+					TimeLabel:Dock(TOP)
+					TimeLabel:SetTextColor(Color(1,1,1,255))
+			
 
 			local TimeBox = vgui.Create( "DTextEntry", gframe)
-			TimeBox:SetPos(460, 80)
-			TimeBox:SetSize( 170, 16 )
-			TimeBox:SetText( "?" )
+				TimeBox:SetText( "Select a ban" )
+				TimeBox:Dock(TOP)
 
 
 			local UpdateButton = vgui.Create( "DButton" , gframe)
-			UpdateButton:SetPos( 460,  120 )
+			
 			UpdateButton:SetText( "Update Ban" )
 			UpdateButton:SetDisabled(true)
-			UpdateButton:SetSize(170,30)
+			UpdateButton:Dock(TOP)
+		
 
 			
 				UpdateButton.DoClick = function( self )
-				print("hi")
+				
 					if !selban then return false end
 							net.Start("Mercury:Commands")
 										net.WriteString("banid")
@@ -86,7 +93,7 @@ local function DoLayout(gframe,bantable)
 				steamid = line_obj.ban.STEAMID
 				selban = line_obj.ban
 				ReasonBox:SetValue(selban.reason)
-				if selban["TimeRemaining"] == "Never" then 
+				if selban["TimeRemaining"] == "Eternity" then 
 					TimeBox:SetValue("0")
 				else
 					TimeBox:SetValue(selban.TimeRemaining)
@@ -95,7 +102,7 @@ local function DoLayout(gframe,bantable)
 			end
 			for k, ply in pairs( bandata ) do
 
-				local item = ctrl:AddLine( ply.STEAMID,ply["TimeRemaining"],ply["bannedby"],ply["reason"] )
+				local item = ctrl:AddLine( ply.Name or "Unknown",ply.STEAMID,tostring(ply["TimeRemaining"]),ply["bannedby"],ply["reason"] )
 				item.ban = ply
 			end	
 

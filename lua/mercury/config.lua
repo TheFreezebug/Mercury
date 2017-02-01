@@ -1,7 +1,7 @@
 Mercury.Config = {
 	UseScoreboard = true,
 	UseTeams = true,
-
+	Language = "enUS",
 
 	TeamOffset = 50000, 
 	UseRankTime = true,
@@ -14,6 +14,7 @@ Mercury.Config = {
 			Rank = Color(130,255,132),
 			Server = Color(1,1,1),
 			Setting = Color(255,100,255),
+			
 
 		},
 
@@ -34,7 +35,7 @@ if SERVER then
 		end
 	end
 end
-
+ 
 
 if CLIENT then
 
@@ -51,6 +52,8 @@ if CLIENT then
 		local CARGS = net.ReadTable()
 		if COMMAND=="SEND_CONFIG" then 
 			Mercury.Config = CARGS
+			print("Got config")
+			Mercury.ModHook.Call("GotConfig")
 		end
 	end)
 end

@@ -1,0 +1,15 @@
+{
+	"title"		:	"Mercury Admin Mod 2.5",
+	"type"		:	"tool",
+	"tags"		:	[ "build", "realism" ],
+	"ignore"	:
+	[
+		"*.psd",
+		"*.vcproj",
+    "*.svn*",
+    "*.dal",
+    "*.txt",
+    "*.md"
+      
+	]
+}

@@ -11,7 +11,7 @@ local function LoadRestrictions()
 /* --- --------------------------------------------------------------------------------
 	@: No Limits
    --- */
-   print("LOADED THE LOAD.")
+
 
 	local META = FindMetaTable("Player")
 	local GetCount = META.GetCount
@@ -19,7 +19,7 @@ local function LoadRestrictions()
 	function META:GetCount(limit, ...)
 		local Result = GetCount(self, limit, ...)
 
-		if !self:HasPrivilege("nolimits") then return Result end
+		if !self:HasPrivilege("nolimits") or !self.NoLimits then return Result end
 		
 		return -1
 	end

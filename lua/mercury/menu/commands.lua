@@ -71,7 +71,7 @@ function GenerateMenu(CONTAINER)
 
 		-- Loop through all the command and add them to their respective category
 		for __, command in SortedPairs(Mercury.Commands.CommandTable, false) do
-			if _ == command.Category and command.HasMenu == true and CategoryNames[command.Category] then
+			if _ == command.Category and command.HasMenu == true and CategoryNames[command.Category] and LocalPlayer():HasPrivilege(__) then
 				CommandButton[__] = vgui.Create("DButton", comwindow)
 				CommandButton[__]:SetSize(210, 20)
 				CommandButton[__]:SetPos(15, 0)
@@ -113,3 +113,15 @@ function GenerateMenu(CONTAINER)
 	end
 end
 Mercury.Menu.AddMenuTab(MenuTab.index, MenuTab.Icon, MenuTab.Name, MenuTab.Desc, GenerateMenu) 
+
+
+
+
+
+
+
+
+
+
+
+

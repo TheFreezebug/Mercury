@@ -15,11 +15,11 @@ Mercury.Ranks.RankTable = {
 	owner = {
 		color = Color(255,255,255),
 		title = "Owner",
-		privileges = {"@allcmds@"},
+		privileges = {"*root"},
 		immunity = 1000,
 		order = 1,
 		admin = true,
-		superadmin = true
+		superadmin = true 
 
 	},
 }
@@ -48,7 +48,7 @@ local rankdefs = {
 	only_target_self = false,
 
 	}
-RNKDFS = rankdefs
+// RNKDFS = rankdefs
 
 
 local function GetTemplateRank()
@@ -302,16 +302,25 @@ function META:GetRank()
 	if !self._RANK then return "default" end
 	return self._RANK
 end
- 
-function META:HasPrivilege(x) 
+
+function META:HasPrivilege(x,__cyclic) 
+
 	if !x then return false,"NO PRIVLAGE?" end
 	local rnk = self:GetRank()
+	
 
-	x = string.lower(x)
+		x = string.lower(x)
 		local gax = Mercury.Ranks.RankTable[rnk]
 		for k,v in pairs(gax["privileges"]) do
-			if x==v or v=="@allcmds@" then return true end
+			if x==v or v=="*root" then return true end
 		end
+
+		if Mercury.Commands.CommandTable[x] and not __cyclic then
+			if Mercury.Commands.CommandTable[x].UseCustomPrivCheck then 
+				return Mercury.Commands.CommandTable[x].PrivCheck(self)
+			end 
+		end 
+
 		return false 
 end
 
@@ -333,6 +342,7 @@ end
 local rnks = file.Find("mercury/ranks/*.txt","DATA")
 print("Loading ranks....")
 for k,v in pairs(rnks) do
+	print("MercuryCreateRankFromFile: "  .. tostring(v))
 	local content = file.Read("mercury/ranks/" .. v )
 	local index = string.sub(v,0,#v-4) // rip .txt
 	local rtab = util.JSONToTable(content)
@@ -354,18 +364,19 @@ for k,v in pairs(rnks) do
 
 		print("Verifying owner rank...")
 		local privbnk = rtab.privileges
+		if !privbnk then privbnk = {} end
 			local allcmds = false 
 			for k,v in pairs(privbnk) do 
-				if v=="@allcmds@" then 
+				if v=="*root" then 
 					allcmds = true 
 				end
 			end
 			if not allcmds then 
-				print("ERROR!:  Owner rank could not be verified to have @allcmds@, pushing @allcmds@ into rank table .")
-				privbnk[#privbnk + 1] = "@allcmds@"
+				print("ERROR!:  Owner rank could not be verified to have *root, pushing *root into rank table .")
+				privbnk[#privbnk + 1] = "*root"
 				rtab.privileges = privbnk
 			else 
-				print("OK: Owner rank verified to have @allcmds@ flag.")
+				print("OK: Owner rank verified to have *root flag.")
 			end
 	end
 	Mercury.Ranks.RankTable[index] = rtab
@@ -403,13 +414,12 @@ end
 
 function Mercury.Ranks.SendRankUpdateToClients()
 	net.Start("Mercury:RankData")
-		net.WriteString("SEND_RANKS")
-		net.WriteTable(Mercury.Ranks.RankTable)
+			net.WriteString("SEND_RANKS")
+			net.WriteTable(Mercury.Ranks.RankTable )
 	net.Send(player.GetAll())
-	
 end
 
-
+ 
 net.Receive("Mercury:RankData",function()
 	local command = net.ReadString()
 	local args = net.ReadTable()

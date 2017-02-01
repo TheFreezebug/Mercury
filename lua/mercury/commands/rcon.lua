@@ -2,10 +2,10 @@
 local MCMD = Mercury.Commands.CreateTable("rcon", "", true, "<script>", true, false, true, "Rcon")
 function callfunc(caller,args)
     if not args[1] then return false, "No arguement was specified" end
-	Mercury.Util.SendMessage(caller,{Color(1,1,1),"[SILENT] ",caller,Color(47,150,255,255), " ran ", Color(255,255,255) , comstring ,Color(47,150,255,255), " on " , Color(1,1,1), "[SERVER]"})
-	if SERVER then
-        game.ConsoleCommand(args[1])
-	end
+    Mercury.Util.SendMessage(caller,{Color(1,1,1),"[SILENT] ",caller,Color(47,150,255,255), " ran ", Color(255,255,255) , table.concat(args," ") ,Color(47,150,255,255), " on " , Color(1,1,1), "[SERVER]"})
+    if SERVER then
+                RunConsoleCommand(unpack(args))
+    end
     return false," "
 end
 
@@ -26,22 +26,33 @@ function MCMD.GenerateMenu(frame)
     Button:SetSize(130, 20)
     Button.DoClick = function(self)
         surface.PlaySound("buttons/button3.wav")
-        local script_string = Script:GetValue().."\n"
+        local script_string = Script:GetValue()
         net.Start("Mercury:Commands")
             net.WriteString("rcon")
-            net.WriteTable({script_string})
+            net.WriteTable(string.Explode(" ",script_string))
         net.SendToServer()
     end
 end
 Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 
 -- Cexec
-local MCMD = Mercury.Commands.CreateTable("cexec", "", true, "<player> <script>", true, true, true, "Rcon")
-function callfunc(caller,args)
-	local comstring = table.concat(args," ",2)
-	args[1]:ConCommand(comstring)
+MCMD = {
+    ["Command"] = "cexec",
+    ["Verb"] = "ran",
+    ["RconUse"] = true,
+    ["Useage"] = "cexec <player> <command>",
+    ["UseImmunity"] =  true,
+    ["HasMenu"] = true,
+    ["Category"] = "Rcon",
+    ["PlayerTarget"] = true,
+    ["AllowWildcard"] = true
+}
 
-	return true, "", true, {caller, Color(47,150,255,255), " ran ", Color(255,255,255), comstring, Color(47,150,255,255), " on ", Color(47,150,255,255), args[1]} 
+function callfunc(caller,args)
+    local comstring = table.concat(args," ",2)
+    args[1]:ConCommand(comstring)
+
+    return true, "", true, {caller, Color(47,150,255,255), " ran ", Color(255,255,255), comstring, Color(47,150,255,255), " on ", Color(47,150,255,255), args[1]} 
 end
 
 function MCMD.GenerateMenu(frame)
@@ -95,12 +106,22 @@ Mercury.Commands.AddCommand(MCMD.Command, MCMD, callfunc)
 -- lua run
 local MCMD = Mercury.Commands.CreateTable("luarun", "", true, "<script>", true, false, true, "Rcon")
 function callfunc(caller,args)
-	local comstring = table.concat(args," ",1)
-	
-	Mercury.Util.SendMessage(caller,{Color(1,1,1),"[SILENT] ",caller,Color(47,150,255,255), " ran ", Color(255,255,255) , comstring} )
-	RunString(comstring)
 
-	return false, " "
+    if type(caller)=="Player" then 
+
+        
+        ptrace = caller:GetEyeTraceNoCursor()
+        that = ptrace.Entity
+        there = ptrace.HitPos 
+        me = caller
+
+    end 
+    local comstring = table.concat(args," ",1)
+    
+    Mercury.Util.SendMessage(caller,{Color(1,1,1),"[SILENT] ",caller,Color(47,150,255,255), " ran ", Color(255,255,255) , comstring} )
+    RunString(comstring)
+
+    return false, " "
 end
 
 function MCMD.GenerateMenu(frame)
@@ -108,7 +129,7 @@ function MCMD.GenerateMenu(frame)
 
     local Script = vgui.Create("DTextEntry", frame)
     Script:SetSize(360, 330)    
-   	Script:SetPos(10, 0)
+    Script:SetPos(10, 0)
     Script:SetText("")
     Script:SelectAllOnFocus()
     Script:SetMultiline(true)
