@@ -2,6 +2,7 @@ Mercury.UDL = {}
 // The worst library in here.
 
 UDL = Mercury.UDL 
+UDL.Debug = false 
 local function SAFESID(steam) return string.gsub(steam,":","_") end
 
 
@@ -45,9 +46,25 @@ function UDL.GetData(data)
 end
 
 function UDL.SaveData(data,tablea)
+	if UDL.Debug then 
+		print("~~MERCURY UDL~~")
+		print("SERIALIZE DATA TABLE")
+		print(tostring(tablea))
+		print(tostring(data))
+
+
+	end 
 	if type(data)=="Player" then
+
 		local uid = SAFESID(data:SteamID())
 		file.Write("mercury/users/" .. uid .. ".txt",util.TableToJSON(tablea))
+		if UDL.Debug then
+			print("FILESYSTEM ACCESS ")
+			print("WRITE mercury/users/" .. uid)
+			
+			
+
+		end
 		return true
 	elseif type(data)==string then
 		local uid = SAFESID(data)
@@ -87,7 +104,7 @@ function UDL.PIS(P)
 	Mercury.Ranks.SetRank(P,shouldrank.rank)
 	P._MercuryUserData = shouldrank.userdata or {}
 	P.RankLoaded = true
-	P._MercuryUserData = {LastKnownName = P:Nick()}
+	P._MercuryUserData.LastKnownName = P:Nick()
 	P._MercuryUserDataLoaded = true
 	Mercury.ModHook.Call("PostUserDataLoaded",P,shouldrank.userdata)
 end
