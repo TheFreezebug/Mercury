@@ -135,7 +135,7 @@ MCMD = {
 
 function callfunc(caller,args)
     if !args[2] or !tonumber(args[2]) then
-        return false, "No time specified"
+        args[2]=0
     end
     if !args[3] then 
         args[3] = "Banned by administrator"
